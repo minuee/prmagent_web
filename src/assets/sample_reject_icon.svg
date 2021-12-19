@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
+    <defs>
+        <style>
+            .cls-2{stroke:#bebebe;fill:#bebebe}
+        </style>
+    </defs>
+    <g id="그룹_18756" transform="translate(12956 -1505)">
+        <g id="그룹_18751">
+            <g id="그룹_18753" transform="translate(116 6)">
+                <g id="그룹_18754">
+                    <g id="타원_376" fill="none" stroke="#bebebe" stroke-width="5px" transform="translate(-13072 1499)">
+                        <circle cx="36" cy="36" r="36" stroke="none"/>
+                        <circle cx="36" cy="36" r="33.5"/>
+                    </g>
+                    <g id="그룹_18750" transform="translate(116.211 149.171)">
+                        <g id="그룹_18749" transform="translate(-13168.211 1369.829)">
+                            <g id="그룹_18748">
+                                <g id="그룹_18747">
+                                    <path id="Line_7" d="M2.144 4.289h36.678a2.144 2.144 0 1 0 0-4.289H2.144a2.144 2.144 0 1 0 0 4.289z" class="cls-2" transform="rotate(135 15.372 8.144)"/>
+                                    <path id="Line_7-2" d="M2.144 4.289h36.678a2.144 2.144 0 1 0 0-4.289H2.144a2.144 2.144 0 0 0 0 4.289z" class="cls-2" transform="rotate(-135 21.11 10)"/>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

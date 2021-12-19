@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="360" viewBox="0 0 240 360">
+    <g>
+        <g>
+            <path fill="#bebebe" d="M0 0H240V360H0z" transform="translate(-141 -2097) translate(141 2097)"/>
+            <text fill="#fff" font-family="Roboto-Medium, Roboto" font-size="30px" font-weight="500" transform="translate(-141 -2097) translate(196 2289)">
+                <tspan x="0" y="0">No Image</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
