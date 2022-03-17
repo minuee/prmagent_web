@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+    <g transform="translate(-9920.24 8640.76)">
+        <rect width="50" height="50" rx="5" transform="translate(9920.24 -8640.76)"/>
+        <g>
+            <path fill="#fff" d="M9.131 19.629v-7.76H1.369a1.369 1.369 0 0 1 0-2.738h7.762V1.369a1.369 1.369 0 0 1 2.738 0v7.762h7.76a1.369 1.369 0 1 1 0 2.738h-7.76v7.76a1.369 1.369 0 1 1-2.738 0z" transform="rotate(135 6764.351 -2245.109)"/>
+        </g>
+    </g>
+</svg>
