@@ -167,7 +167,6 @@ export const apiObject = {
         compy_nm,
       },
     };
-    console.log('sssinit ',init)
     return Api.get(apiName, path, init);
   },
   getPrivacyPolicy: () => {
@@ -195,8 +194,7 @@ export const apiObject = {
     return Api.post(apiName, path, init);
   },
   getMoblieAuthCheck: ({ mobile_no, auth_no }) => {
-    console.log("mobile_no : ", mobile_no);
-    console.log("auth_no : ", auth_no);
+
     var apiName = v1Cdn;
     var path = "/cdn/mobile-auth-check";
     var init = {

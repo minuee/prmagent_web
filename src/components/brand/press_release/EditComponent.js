@@ -179,7 +179,6 @@ function PressReleaseEdit({ press_no, data, idx }) {
       for (let index = 0; index < add_img_file.img_adres.length; index++) {                
         let d = add_img_file.img_adres[index];
         if (typeof d == 'object') {
-          console.log('dddddddfileee',d)
           let file_name = uuidv4();
           let file_extension = d.name.substring(d.name.lastIndexOf("."), d.name.length).toLowerCase();
           let key = `press/images/${file_name}${file_extension}`;
@@ -194,20 +193,17 @@ function PressReleaseEdit({ press_no, data, idx }) {
             });
             const str =  `public/${data.key}`;
             await newArr.push(str.toString());
-            console.log('newArr file',newArr)
           } catch (error) {
             console.error(error);
             return error;
           }
         }else{
           newArr.push(d.toString());
-          console.log('newArr else',newArr)
         }
         
       }
     }
      
-    console.log('newArr final',newArr)
     return  newArr;
   })
 
@@ -341,7 +337,6 @@ function PressReleaseEdit({ press_no, data, idx }) {
     return <Progress type="upload" />;
   }
 
-  console.log('addImg',addImg)
   return (
     <>
       <ContentsOuterWrap>

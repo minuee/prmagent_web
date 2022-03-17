@@ -22,7 +22,7 @@ function ReqWaitComponent({ data, idx, startDt, endDt, season, gender }) {
     showroom_no: null,
     msg: null,
   });
-
+  console.log('inputsinputs',inputs)
   const requestConfirm = useMutation(
     () =>
       apiObject.setRequestConfirm({
@@ -32,10 +32,7 @@ function ReqWaitComponent({ data, idx, startDt, endDt, season, gender }) {
         isDuplicate : isDuplicate
       }),
     {
-      onSuccess: () => {
-        utils.customAlert("승인 되었습니다.");
-        setOpen(false);
-        setDialogOpen(false);
+      onSuccess: () => {        
         queryClient.invalidateQueries([
           "brand",
           "scheduler",
@@ -45,6 +42,9 @@ function ReqWaitComponent({ data, idx, startDt, endDt, season, gender }) {
           season.season_cd_id,
           gender === 0 ? null : gender,
         ]);
+        window.alert("승인 되었습니다.");
+        setOpen(false);
+        setDialogOpen(false);
       },
       onError: () => {
         utils.customAlert("처리 중 오류가 발생했습니다.");
@@ -62,9 +62,7 @@ function ReqWaitComponent({ data, idx, startDt, endDt, season, gender }) {
       }),
     {
       onSuccess: () => {
-        utils.customAlert("거부 처리되었습니다.");
-        setOpen(false);
-        setDialogOpen(false);
+        //utils.customAlert("거부 처리되었습니다.");
         queryClient.invalidateQueries([
           "brand",
           "scheduler",
@@ -74,6 +72,9 @@ function ReqWaitComponent({ data, idx, startDt, endDt, season, gender }) {
           season.season_cd_id,
           gender === 0 ? null : gender,
         ]);
+        setOpen(false);
+        setDialogOpen(false);
+        window.alert("거부 처리되었습니다.");
       },
       onError: () => {
         utils.customAlert("처리 중 오류가 발생했습니다.");
@@ -84,7 +85,6 @@ function ReqWaitComponent({ data, idx, startDt, endDt, season, gender }) {
 
   const handleConfirmDailogOpen = useCallback(
     (req_no, showroom_no, d,idx) => {
-      console.log('dddd',req_no, showroom_no, d,idx )
       setDialogOpen(true);
       setInputs({ ...inputs, req_no: req_no, showroom_no: [`${showroom_no}`] });
     },
@@ -110,7 +110,6 @@ function ReqWaitComponent({ data, idx, startDt, endDt, season, gender }) {
   );
 
   const rdata = query.isLoading ? [] : utils.isEmpty(query.data) ? [] :query.data;  
-  console.log('isDuplicate',isDuplicate)
 
   if (query.isLoading) {
     return <Progress type="load" />;
@@ -189,7 +188,7 @@ const Container = styled.div`
   width: 184px;
   height: 197px;
   position: relative;
-
+  
   > img {
     width: 56px;
     height: 56px;

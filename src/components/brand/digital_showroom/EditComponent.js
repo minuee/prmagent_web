@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import _ from "lodash";
 import useOutsideClick from "components/UseOutsideClick";
 import SampleAddIcon from "assets/sample_add_icon.png";
-import EditSample from "components/brand/digital_showroom/EditSample";
+//import EditSample from "components/brand/digital_showroom/EditSample";
 import AddSample from "components/brand/digital_showroom/AddSample";
 import CancelIcon from "assets/close_icon.png";
 import CheckIcon from "assets/check_icon.png";
@@ -48,7 +48,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function EditComponent({ data, size, sampleOptions, sampleNo }) {
-  //console.log('EditComponent',data)
   const START_YEAR = 2017;
   const END_YEAR = dayjs().year() + 1;
   const history = useHistory();
@@ -131,53 +130,82 @@ export default function EditComponent({ data, size, sampleOptions, sampleNo }) {
   };
 
   const handleConfirm = () => {
-    alertConfirm({
-      title: Constants.appName,
-      content: '수정하시겠습니까?',
-      onOk: () => {
-        if (
-          commonData.season_year === "" &&
-          commonData.season_year_direct === ""
-        ) {
-          utils.customAlert("시즌연도를 입력해주세요.");
-          return;
-        } else if (commonData.season_cd_id === "") {
-          utils.customAlert("컬렉션을 선택해주세요.");
-          return;
-        } else if (
-          commonData.season_cd_id === "none" &&
-          commonData.season_direct_input === ""
-        ) {
-          utils.customAlert("컬렉션을 입력해주세요.");
-          return;
-        }
-        sampleList.forEach((d) => {
-          if (d.sample_image_list.length === 0) {
-            utils.customAlert("이미지를 등록해주세요.");
-            return;
-          } else if (d.sample_nm === "") {
-            utils.customAlert("샘플명을 입력해주세요.");
-            return;
-          } else if ( d.sample_catgry_middle_cl_cd === "" && d.sample_catgry_direct_input === "" ) {
-            utils.customAlert("카테고리를 선택해주세요.");
-            return;
-          } else if (d.gender_cd_id === "") {
-            utils.customAlert("성별을 선택해주세요.");
-            return;
-          } else if (d.buying_cd_id.length === 0) {
-            utils.customAlert("구매정보를 선택해주세요.");
-            return;
-          /* } else if (d.color_cd_id.length === 0) {
-            utils.customAlert("색상을 선택해주세요.");
-            return; */
-          } else if (d.price === "") {
-            d.price = null;
-          }
+    
+    if ( commonData.season_year === "" && commonData.season_year_direct === "") {
+      utils.customAlert("시즌연도를 입력해주세요.");
+      return;
+    } else if (commonData.season_cd_id === "") {
+      utils.customAlert("컬렉션을 선택해주세요.");
+      return;
+    } else if ( commonData.season_cd_id === "none" && commonData.season_direct_input === "" ) {
+      utils.customAlert("컬렉션을 입력해주세요.");
+      return;
+    }
+    let isOk = 0;
+    for ( let num = 0; num < sampleList.length ; num++) {
+      let d = sampleList[num];
+      if (d.sample_image_list.length === 0) {
+        utils.customAlert("이미지를 등록해주세요.");
+        break;
+      } else if (d.sample_nm === "") {
+        utils.customAlert("샘플명을 입력해주세요.");
+        break;
+      } else if ( d.sample_catgry_middle_cl_cd === "" && d.sample_catgry_direct_input === "" ) {
+        utils.customAlert("카테고리를 선택해주세요.");
+        break;
+      } else if (d.gender_cd_id.trim() === "") {
+        utils.customAlert("성별을 선택해주세요.");
+        break;
+      } else if (d.buying_cd_id.length === 0) {
+        utils.customAlert("구매정보를 선택해주세요.");
+        break;
+      /* } else if (d.color_cd_id.length === 0) {
+        utils.customAlert("색상을 선택해주세요.");
+        break; */
+      }else{ 
+        if ( d.price === "") d.price = null;
+        isOk++;
+      }
+    }
+    
+    if ( isOk == sampleList.length ) {
+      alertConfirm({
+        title: Constants.appName,
+        content: '수정하시겠습니까?',
+        onOk: () => {
           updateShowroom.mutate();
-        });        
-      },
-      onCancel: () => {console.log('cancel')}
-    });
+
+            /* sampleList.forEach((d) => {
+              if (d.sample_image_list.length === 0) {
+                utils.customAlert("이미지를 등록해주세요.");
+                return;
+              } else if (d.sample_nm === "") {
+                utils.customAlert("샘플명을 입력해주세요.");
+                return;
+              } else if ( d.sample_catgry_middle_cl_cd === "" && d.sample_catgry_direct_input === "" ) {
+                utils.customAlert("카테고리를 선택해주세요.");
+                return;
+              } else if (d.gender_cd_id === "") {
+                utils.customAlert("성별을 선택해주세요.");
+                return;
+              } else if (d.buying_cd_id.length === 0) {
+                utils.customAlert("구매정보를 선택해주세요.");
+                break;
+                return ;
+              } else if (d.color_cd_id.length === 0) {
+                utils.customAlert("색상을 선택해주세요.");
+                return;
+              } else {
+                if ( d.price === "") d.price = null;
+                isCanUpdate = true
+                if ( isCanUpdate)  updateShowroom.mutate(); 
+              } 
+            });    */
+            
+        },
+        onCancel: () => {console.log('cancel')}
+      });
+    }
 
     /* if (confirm("수정하시겠습니까?")) {
       /* if (commonData.showroom_nm === "") {
@@ -223,8 +251,7 @@ export default function EditComponent({ data, size, sampleOptions, sampleNo }) {
         }
         updateShowroom.mutate();
       }); */
-      // console.log("CONFIRM COMMON: ", commonData);
-      // console.log("CONFIRM SAMPLE: ", sampleList);
+
     //}
   };
 
@@ -392,7 +419,6 @@ export default function EditComponent({ data, size, sampleOptions, sampleNo }) {
     return <Progress type="upload" />;
   }
 
-  //console.log("CONFIRM COMMON: ", commonData);
   return (
     <>
       <Container>

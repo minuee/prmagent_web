@@ -47,8 +47,9 @@ const TitleTxt2 = styled.div`
 `;
 
 const RightWrap = styled.div`
+  display: flex;
   position: relative;
-  margin-right: 40px;  
+  margin-right: 0px;  
 `;
 
 const Filter = styled.div`
@@ -95,7 +96,24 @@ const CheckImg = styled.img`
   margin-right: 5px;
 `;
 
-export default function SampleRequests({open,setOpen,filter,handleChange,}) {
+
+const Head2Btn = styled.div`
+  width: 128px;
+  height: 50px;
+  border-radius: 5px;  
+  border : ${(props) => (props.filter2 != null ? "solid 1px #000000" : "solid 1px #dddddd")};    
+  margin-right:20px;
+  font-size: 16px;
+  font-weight: 500;  
+  color :  ${(props) => (props.filter2 != null ? "#ffffff" : "#7ea1b2")};    
+  background-color:  ${(props) => (props.filter2 != null ? "#000000" : "#ffffff")};    
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;  
+  cursor: pointer;
+`;
+export default function SampleRequests({open,setOpen,type,filter,filter2,handleChange,handleChange2}) {
 
   const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer); 
   return (
@@ -103,6 +121,11 @@ export default function SampleRequests({open,setOpen,filter,handleChange,}) {
       <Container active={isdrawer}>
         <TitleTxt1>Sample <TitleTxt2>Requests</TitleTxt2></TitleTxt1>
         <RightWrap>
+          {type === "request" &&
+          <Head2Btn onClick={() => handleChange2(filter2)} filter2={filter2}>
+            미응답 요청
+          </Head2Btn>
+          }
           <Filter onClick={() => setOpen(!open)}>
             <div>
               {filter === "PMS004"

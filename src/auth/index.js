@@ -52,10 +52,10 @@ export default class Auth {
       });
       return result.data;
     } else if (result.status === 403) {
-      console.log(result.data);
+
       return { status: result.status, ...result.data };
     } else {
-      console.log(result);
+
       return { status: result.status, ...result.data };
     }
   }

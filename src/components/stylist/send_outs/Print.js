@@ -245,6 +245,6 @@ const TbodyTd = styled.td`
     props.imgUrl &&
     css`
       background: url("${(props) => props.imgUrl}") no-repeat center;
-      background-size: cover;
+      background-size: contain;
     `}
 `;

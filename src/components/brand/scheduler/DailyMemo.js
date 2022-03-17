@@ -7,11 +7,12 @@ import MemoIcon from "assets/scheduler/memoIcon_w.svg";
 import MemoDialog from "./MemoDialog_v2";
 import MemoComponent from "components/brand/scheduler/DetailMemo";
 
-function DailyMemo({ data, index, look,inputs }) {
+function DailyMemo({ data, index, look,thisLook,inputs ,daysStartTerm,daysEndTerm}) {
+
   const [open, setOpen] = useState(false);
   const [selectLook, setSelectLook] = useState(null);
 
-  const weekDateOptions = [
+  /* const weekDateOptions = [
     {
       value: moment(moment(data).weekday(0)).unix(),
       label: moment(moment(data).weekday(0)).locale("en").format("M/D (ddd)"),
@@ -40,8 +41,17 @@ function DailyMemo({ data, index, look,inputs }) {
       value: moment(moment(data).weekday(6)).unix(),
       label: moment(moment(data).weekday(6)).locale("en").format("M/D (ddd)"),
     },
-  ];
-
+  ]; */
+  let weekDateOptions = [];
+  for(let i=daysStartTerm ; i<=daysEndTerm ; i++) {
+    weekDateOptions.push(
+      {
+        value: moment(moment(data).weekday(i)).unix(),
+        label: moment(moment(data).weekday(i)).locale("en").format("M/D (ddd)"),
+      }
+    )
+    
+  }
   useEffect(() => {
     setSelectLook(
       look.map((d) => ({
@@ -65,6 +75,7 @@ function DailyMemo({ data, index, look,inputs }) {
           selectLook={selectLook}
           selectDate={weekDateOptions}
           nowDt={data}
+          thisLook={thisLook}
         />
       )}
     </Date>

@@ -10,6 +10,8 @@ import InquiryNumber from "../components/InquiryNumber";
 import ShowroomInquiry from "../components/ShowroomInquiry";
 import Unavailable from "../components/Unavaliable";
 import SettingIcon from "../assets/setting_icon_w.png";
+import LimitDays from "../components/LimitDays";
+
 
 function SettingDialog({ open, setOpen }) {
   const classes = useStyles();
@@ -71,6 +73,12 @@ function SettingDialog({ open, setOpen }) {
               >
                 쇼룸 휴무일 설정
               </Menu>
+              <Menu
+                active={onMenu === "limitdays" ? true : false}
+                onClick={() => handleClick("limitdays")}
+              >
+                홀딩요청 최대기간 설정
+              </Menu>
             </MenusWrap>
           </SideWrap>
           <ContentsWrap>
@@ -85,6 +93,9 @@ function SettingDialog({ open, setOpen }) {
             )}
             {onMenu === "unavailable" && (
               <Unavailable handleClose={handleClose} />
+            )}
+            {onMenu === "limitdays" && (
+              <LimitDays handleClose={handleClose} />
             )}
           </ContentsWrap>
         </ModalWrapper>

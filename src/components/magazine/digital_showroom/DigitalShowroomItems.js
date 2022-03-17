@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useState } from "react";
+import styled, { css } from "styled-components";
 import { darken, lighten } from "polished";
 import { useHistory } from "react-router-dom";
 import SyncIcon from "@material-ui/icons/Sync";
@@ -10,6 +10,7 @@ import SelectSeason from "./SelectSeason";
 import NoticeIcon from "assets/notice_icon.png";
 import FilterIcon from "assets/filter_icon.png";
 import TooltipIcon from "assets/information_icon.png";
+import SelectDownIcon from "assets/select_down_icon.png";
 /* 서랍장 상태 관리 */
 import { useRecoilState } from "recoil";
 import { currentDrawer } from "redux/state";
@@ -43,12 +44,21 @@ export default function DigitalShowroomItems({
       history.push("/magazine/digital_showroom/edit/" + idx);
     }
   };
+  const [viewOpen, setViewOpen] = useState(false);
 
+  const handleToggleClick = (view) => {
+    setViewOpen(view)
+  }
+  const handleToggleClick2 = () => {
+    if ( viewOpen ) {
+    setViewOpen(false)
+    }
+  }
   
   if ( currentBrandId !== 'all' ) {
   return (
     <>      
-      <>
+      <TopContainer>
         <SelectWrap active={isdrawer}>
           <LeftWrap>
             <BrandTitle>{!utils.isEmpty(currentBrand.brand_nm)  ? currentBrand.brand_nm : null}</BrandTitle>
@@ -121,12 +131,44 @@ export default function DigitalShowroomItems({
           {
             ( data.pages[0].total_count > 0  && currentBrandId !== 'all' ) &&
             <ContactBottomWrap>
-              <ContactTxt>문의 : {brandNotice.inquiry_number}</ContactTxt>
+              <ContactTxt>소비자문의 : {brandNotice.inquiry_number}</ContactTxt>
               <ContactTxt>|</ContactTxt>
               <ContactTxt>
-                쇼룸 : {!utils.isEmpty(brandNotice.inquiry_charge) && (" "+brandNotice.inquiry_charge)}
+                쇼룸문의 : {!utils.isEmpty(brandNotice.inquiry_charge) && (" "+brandNotice.inquiry_charge)}
                 {" "+utils.phoneFormat(brandNotice.showroom_inquiry_contact)}
                 {!utils.isEmpty(brandNotice.showroom_inquiry_email) && (" "+brandNotice.showroom_inquiry_email)}
+                {!utils.isEmpty(brandNotice.inquiry_charge2) && 
+                <span style={{justifyContent:'center',alignItems:'center',cursor:'pointer'}}>
+                  {"  "}<img src={SelectDownIcon} alt="more" onClick={() => handleToggleClick(!viewOpen)} style={{height:15}} />
+                </span>
+                
+                }
+                {
+                  viewOpen && (
+                  <Popup active={isdrawer}>
+                      <PopupMenus >
+                        추가담당자
+                      </PopupMenus>
+                      <PopupMenus2>
+                        {!utils.isEmpty(brandNotice.inquiry_charge2) && (" "+brandNotice.inquiry_charge2)}
+                        {" "+utils.phoneFormat(brandNotice.showroom_inquiry_contact2)}
+                        {!utils.isEmpty(brandNotice.showroom_inquiry_email2) && (" "+brandNotice.showroom_inquiry_email2)}
+                      </PopupMenus2>
+                      { !utils.isEmpty(brandNotice.inquiry_charge3) &&
+                      <PopupMenus>
+                        추가담당자
+                      </PopupMenus>
+                      }
+                      { !utils.isEmpty(brandNotice.inquiry_charge3) &&
+                      <PopupMenus2>
+                        {brandNotice.inquiry_charge3}
+                        {" "}{brandNotice.showroom_inquiry_contact3}
+                        {" "}{brandNotice.showroom_inquiry_email3}
+                      </PopupMenus2>
+                      }
+                  </Popup>
+                  )                
+                }
               </ContactTxt>
             </ContactBottomWrap>
           }
@@ -177,7 +219,7 @@ export default function DigitalShowroomItems({
             
           }
         </Container>
-      </>
+      </TopContainer>
       {selectData.length > 0 && (
         <SelectInfoWrap>
           <SelectIconTxtWrap>
@@ -211,7 +253,7 @@ export default function DigitalShowroomItems({
             <ContactTopWrap>
               <Info><img src={TooltipIcon} alt="tooltip"  style={{height:"30px"}} /></Info>
               <InfoTooltip>
-                <div>브랜드 선택후 홀드요청이 가능합니다.(브랜드별)</div>
+                <div>브랜드{" "}선택{" "}후{" "}홀딩{" "}요청이{" "}가능합니다.{" "}(브랜드{" "}별)</div>
               </InfoTooltip>
               <AddBtn onClick={handleBrandsBtn}>
                 <div>BRANDS</div>
@@ -276,7 +318,9 @@ export default function DigitalShowroomItems({
   }
 }
 
+const TopContainer = styled.div`
 
+`;
 const SelectWrap = styled.div`
   margin-bottom: 12px;  
   display: flex;
@@ -327,13 +371,15 @@ const Info = styled.div`
 `
 const ContactBottomWrap = styled.div`
   display:flex;
+  flex:1;
   align-items: center;  
 `;
 
 
 const ContactTxt = styled.div`
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
-
   & + & {
     margin-left: 10px;
   }
@@ -429,6 +475,7 @@ const InquiryOuterWrap = styled.div`
   width:98%;
   margin-left:10px;  
   margin-bottom:20px;
+
 `;
 const BrandTitle = styled.div`
   font-size: 20px;
@@ -466,7 +513,33 @@ const ImgDiv = styled.img`
 `;
 
 
+const Popup = styled.div`
+  position: absolute;
+  top: 360px;
+  left: ${(props) => (props.active ? "240px" : "510px")}; 
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  height: 170px;
+  border: solid 1px #dddddd;
+  background-color: #ffffff;
+  padding: 10px 0px;
+  z-index:10;
+  overflow:auto;  
+`;
 
+const PopupMenus = styled.div`
+  font-size: 18px;
+  font-weight: 500;
+  padding: 5px 20px;
+`;
+
+const PopupMenus2 = styled.div`
+  font-size: 15px;
+  font-weight: 500;
+  padding: 5px 30px 10px 30px;
+  color:#555555;
+`;
 const AddBtn = styled.div`
   font-size: 16px;
   font-weight: bold;

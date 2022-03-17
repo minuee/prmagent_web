@@ -41,7 +41,6 @@ function MainSendOut({ data = null, title, subTitle, type = "brand" }) {
     [type]
   );
 
-  //console.log('ddddddd',data)
   const targetData = utils.isEmpty(data[0]) ?[] : data[0].each_list;
   return (
     <>
@@ -66,7 +65,7 @@ function MainSendOut({ data = null, title, subTitle, type = "brand" }) {
                 textAlign="center"
                 fontWeight="900"
               >
-                {data.length}
+                {targetData.length}
               </TxtWrap>
             </RequestCntWrap>
             <StyledSwiper 
@@ -76,7 +75,6 @@ function MainSendOut({ data = null, title, subTitle, type = "brand" }) {
               navigation>
               {targetData.map((item, i) => {
                 const subItem = item.showroom_list[0];
-                console.log('subItem',i,subItem);
                 return (
                 <SwiperSlide key={i}>
                   <CardWrap onClick={() => handleClick(subItem)}>
@@ -95,16 +93,17 @@ function MainSendOut({ data = null, title, subTitle, type = "brand" }) {
                     </CardComp>
                     <CardComp>
                       <TxtWrap fontSize="15px" color="#999999">
-                      {"   "} {subItem.req_user_nm}{subItem.req_user_position}
+                      {"   "} {subItem.req_user_nm} {subItem.req_user_position}
                       </TxtWrap>
                     </CardComp>
-                    <CardComp>
+                    {/* <CardComp>
                       <TxtWrap fontSize="13px">
-                        {dayjs.unix(data[0].date).format("YYYY-MM-DD")}
+                        {dayjs.unix(data[0].date).format("YYYY-MM-DD")} <TxtWrap fontSize="11px" color="#999999">ReqNo:{subItem.req_no}</TxtWrap>
                       </TxtWrap>
-                    </CardComp>
+                    </CardComp> */}
                     
                   </CardWrap>
+                  
                 </SwiperSlide>
                 )
               })}

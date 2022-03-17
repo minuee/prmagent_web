@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import styled, { css } from "styled-components";
 import { darken } from "polished";
+import 'moment/locale/ko';
 import moment from "moment";
 
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
@@ -131,7 +132,16 @@ const Day = styled.div`
 `;
 
 function DatePicker({ startDt, setStartDt, endDt, setEndDt, setOpen }) {
-  const [initDt, setInitDt] = useState(startDt);
+
+  const strStartDtYear = moment(startDt).format('YYYY');
+  const strStartDtMonth = moment(startDt).format('MM');
+  
+  let newSatrtDt = startDt;
+  if ( strStartDtMonth == '12' ) {
+    newSatrtDt = moment(new Date(strStartDtYear, 11, 1));
+  }
+
+  const [initDt, setInitDt] = useState(newSatrtDt);
 
   const handleMonthChange = useCallback(
     (act) => {
@@ -146,56 +156,41 @@ function DatePicker({ startDt, setStartDt, endDt, setEndDt, setOpen }) {
 
   const handleDtChange = useCallback(
     (week) => {
-      setStartDt(moment().day(0).week(week));
-      setEndDt(moment().day(6).week(week));
+      setStartDt(moment(initDt).day(0).week(week));
+      setEndDt(moment(initDt).day(6).week(week));
       setOpen(false);
     },
     [startDt, endDt, open]
   );
 
   function generate() {
-    const today = initDt;
+    /* const today = initDt;
     const startWeek = today.clone().startOf("month").week();
     const endWeek =
       today.clone().endOf("month").week() === 1
         ? 53
         : today.clone().endOf("month").week();
+    let calendar = []; */       
+    const today = initDt;    
+    const startWeek = ( today.clone().startOf("month").week() == 1 && today.clone().endOf("month").week() == 1) ? 49 : today.clone().startOf("month").week();
+    const endWeek = today.clone().endOf("month").week() == 1 ? 53 : today.clone().endOf("month").week();
+    
     let calendar = [];
-    for (let week = startWeek; week <= endWeek; week++) {
+    for (let week = startWeek; week <= endWeek; week++) {           
       calendar.push(
         <DayWrap onClick={() => handleDtChange(week)}>
           {Array(7)
             .fill(0)
             .map((n, i) => {
-              let current = today
-                .clone()
-                .week(week)
-                .startOf("week")
-                .add(n + i, "day");
-              let isSelected =
-                current.format("YYYY-MM-DD") ===
-                  moment(startDt).format("YYYY-MM-DD") ||
-                current.format("YYYY-MM-DD") ===
-                  moment(endDt).format("YYYY-MM-DD")
-                  ? true
-                  : false;
-              let isGrayed =
-                current.format("MM") === today.format("MM") ? "" : "grayed";
+              let current = today.clone().week(week).startOf("week").add(n + i, "day");              
+              let isSelected = current.format("YYYY-MM-DD") === moment(startDt).format("YYYY-MM-DD") || current.format("YYYY-MM-DD") === moment(endDt).format("YYYY-MM-DD") ? true : false;
+              let isGrayed =current.format("MM") === today.format("MM") ? "" : "grayed";
               let isOver = "";
-              if (
-                current.format("YYYY-MM-DD") ===
-                moment(startDt).format("YYYY-MM-DD")
-              ) {
+              if ( current.format("YYYY-MM-DD") === moment(startDt).format("YYYY-MM-DD") ) {
                 isOver = "start";
-              } else if (
-                current.format("YYYY-MM-DD") ===
-                moment(endDt).format("YYYY-MM-DD")
-              ) {
+              } else if ( current.format("YYYY-MM-DD") === moment(endDt).format("YYYY-MM-DD") ) {
                 isOver = "end";
-              } else if (
-                current.isAfter(moment(startDt)) &&
-                current.isBefore(moment(endDt))
-              ) {
+              } else if ( current.isAfter(moment(startDt)) && current.isBefore(moment(endDt)) ) {
                 isOver = "on";
               }
               return (

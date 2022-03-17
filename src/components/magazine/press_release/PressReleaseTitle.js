@@ -29,7 +29,7 @@ const TitleTxt2 = styled.div`
   font-size: ${Constants.titleFontSize};
   font-weight: bold;
   line-height: ${Constants.titleFontSize};
-  margin-left: 20px;
+  margin-left: 10px;
 `;
 
 const TitleTxt2Wrap = styled.div`

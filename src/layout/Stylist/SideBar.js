@@ -84,7 +84,6 @@ export default function SideBar() {
       },
       async (data) => {
         // 성공처리
-        console.log("signOutFunction -> data", data);
 
         dispatch({
           type: "SIGN_OUT",
@@ -92,7 +91,6 @@ export default function SideBar() {
       },
       (error) => {
         // 실패처리,
-        console.log("signOutFunction -> error", error);
         alert(error.message);
       }
     );

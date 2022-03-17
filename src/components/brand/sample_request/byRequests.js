@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import styled from "styled-components";
 import { useQuery } from "react-query";
 
@@ -39,13 +39,19 @@ const List = styled.div`
   color: #555555;
 `;
 
-export default function ByRequest({ modelType }) {
+export default function ByRequest({ modelType,filter }) {
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter])
+
   const requestsData = useQuery(
-    ["requests-data", modelType, page],
+    ["requests-data", modelType, filter,page],
     async () =>
       await apiObject.getRequests({
         model_type: modelType,
+        isConfirm : filter,
         page: page,
         limit: 5,
       })
@@ -54,7 +60,6 @@ export default function ByRequest({ modelType }) {
   const handleCheck = () => {};
 
   const data = requestsData.isLoading ? [] : requestsData.data.request_list;
-
   if (requestsData.isLoading) {
     return <Progress type="load" />;
   }
@@ -62,10 +67,11 @@ export default function ByRequest({ modelType }) {
     <>
       <Container>
         <Body>
+          <List width="6%">Checked</List>
           <List width="10%">Logo</List>
           <List width="10%">Thumbnail</List>
-          <List width="20%">Name</List>
-          <List width="24%">Magazines</List>
+          <List width="20%">Magazine</List>
+          <List width="18%">Name</List>         
           <List width="22%">Contact</List>
           <List width="10%">Date</List>
           <List width="4%"></List>

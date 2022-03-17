@@ -105,7 +105,6 @@ export default function AddComponent({
     });        
     const isCheck = (element) => ( element.photogrf_dt == dateFormat || element.duty_recpt_dt == dateFormat || element.return_prearnge_dt == dateFormat);
     //const isReservation = reservationArray.some(isCheck);
-    //console.log('isReservation',isReservation)
     if ( reservationArray.some(isCheck) ) {
         alert('해당일자에는 이미 예약이 되어 있습니다.');
         setShootingDt(dayjs.unix(data.shooting_date).toISOString())       
@@ -247,7 +246,6 @@ export default function AddComponent({
       loc_value: inputs.loc_value,
     };
     handleSubmit(requestBody);
-    // console.log("REQ BODY : ", requestBody);
   };
 
   const contact_options = options.contact_info.map((d) => ({

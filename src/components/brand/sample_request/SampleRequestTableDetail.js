@@ -34,7 +34,6 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
   const [updateDate, setUpdateDate] = useState(new Date().getTime());  
 
   useEffect(() => {
-    //console.log('useEffectuseEffectuseEffect ',acceptList ,updateDate)
     setAcceptList(acceptList);
     setRejectList(rejectList);
   }, [updateDate])
@@ -42,12 +41,8 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
 
   const handleAcceptList = useCallback(
     (showroom_no) => {
-      //console.log('handleAcceptList 1 ',acceptList )
-      //console.log('acceptList.includes(showroom_no) ',acceptList.includes(showroom_no) )
-
       setAcceptList(acceptList.includes(showroom_no) ? acceptList.filter((d) => d !== showroom_no) : [...acceptList, showroom_no]);    
       setUpdateDate(new Date().getTime());
-      //console.log('acceptList 2 ',acceptList )
     },
     [acceptList]
   );
@@ -73,61 +68,44 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
     
     const shooting_date = dayjs.unix(data.shooting_date).format("YYYY-MM-DD")
     
-    let isDupCheck =  false;
+    let isDupCheck =  false;//동일일자확인
+    let isDupJustCheck =  false; //기간내 중복확인
     let isDupLookName = "";
     let strTarget_req_no = "";
     let strTarget_showroom_no = "";
     let strTarget_user_position = "";
     let strTarget_user_name = "";
     let strTarget_company_name = "";
-    console.log('data.reservation_list',data.reservation_list)
-    data.reservation_list.forEach((d2, i2) => {
+    let reservation = data.reservation_list.length > 0 ? data.reservation_list : data.reservation_list2;
+    reservation.forEach((d2, i2) => {
       let targetShowroom = d2.showroom_no;
-      console.log('targetShowroom',targetShowroom)
+      let reservation_type = d2.date_info[0].reservation_type;
+
       const isSubCheck = (element) => element == targetShowroom;
-      let isCheck = acceptList.some(isSubCheck);
-     
+      let isCheck = acceptList.some(isSubCheck); 
       if ( isCheck) {
         if ( shooting_date === d2.date_info[0]?.photogrf_dt) {      
-          isDupCheck = true;
-          isDupLookName = d2.date_info[0]?.showroom_nm;
-          strTarget_req_no = d2.date_info[0]?.target_req_no;
-          strTarget_showroom_no = d2.date_info[0]?.target_showroom_no;
-          strTarget_user_position = d2.date_info[0]?.target_user_position;
-          strTarget_user_name = d2.date_info[0]?.target_user_name;
-          strTarget_company_name = d2.date_info[0]?.target_company_name;
-          setDuplicate({
-            target_req_no : strTarget_req_no,
-            target_showroom_no : strTarget_showroom_no,
-            target_user_name : strTarget_user_name,
-            target_user_position : strTarget_user_position,
-            target_company_name : strTarget_company_name
-          })
+          reservation_type === 'justcheck' ? isDupJustCheck = true : isDupCheck = true ;
+          if ( reservation_type === 'dupcheck') {
+            isDupLookName = d2.date_info[0]?.showroom_nm;
+            strTarget_req_no = d2.date_info[0]?.target_req_no;
+            strTarget_showroom_no = d2.date_info[0]?.target_showroom_no;
+            strTarget_user_position = d2.date_info[0]?.target_user_position;
+            strTarget_user_name = d2.date_info[0]?.target_user_name;
+            strTarget_company_name = d2.date_info[0]?.target_company_name;
+            setDuplicate({
+              target_req_no : strTarget_req_no,
+              target_showroom_no : strTarget_showroom_no,
+              target_user_name : strTarget_user_name,
+              target_user_position : strTarget_user_position,
+              target_company_name : strTarget_company_name
+            })
+          }
         }
       }      
     }); 
-    
-    console.log('isDupCheck',isDupCheck)
+
     if ( isDupCheck && acceptList.length > 0 && rejectMsg.length === 0 ) {
-      /* if (confirm( isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다? 그래도 승인하시겠습니까?")) { 
-        if (acceptList.length > 0 && rejectMsg.length === 0) {
-          const today = dayjs().format("YYYY-MM-DD");
-          const shooting_date = dayjs.unix(data.shooting_date).format("YYYY-MM-DD");          
-          if (dayjs(today).diff(shooting_date, "day") > 0) {
-            alertConfirm({
-              title: Constants.appName,
-              content: '이미 촬영일이 지난 요청입니다. 승인하시겠습니까?',
-              onOk: () => {setselectDialog(true)},
-              onCancel: () => {console.log('cancel')}
-            });
-          } else {
-            setselectDialog(true)
-          }        
-        } else {
-          utils.customAlert("선택된 요청이 없습니다. 다시 확인해주세요.");
-          return;
-        }
-      } */
       alertConfirm({
         title: Constants.appName,
         content: isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다? 그래도 승인하시겠습니까?",
@@ -152,7 +130,16 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
         },
         onCancel: () => {console.log('cancel')}
       });
-
+    }else if ( isDupJustCheck && acceptList.length > 0 && rejectMsg.length === 0 ) {
+      await setDuplicate("");
+      alertConfirm({
+        title: Constants.appName,
+        content: "촬영기간내 " + isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?",
+        onOk: () => {
+          setMsgDialog(true)
+        },
+        onCancel: () => {console.log('cancle')}
+      });
     }else{    
       if (acceptList.length > 0 && rejectMsg.length === 0) {
         const today = dayjs().format("YYYY-MM-DD");
@@ -220,8 +207,7 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
   );
 
   const data = query.isLoading ? [] : utils.isEmpty(query.data) ? [] :query.data;  
-  
-    
+ 
   const sampleAccept = useMutation(
     (value) =>
       apiObject.setRequestConfirm({
@@ -250,7 +236,9 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
     (value) =>
       apiObject.setRequestRefuse({
         req_no: value.req_no,
-        showroom_list: value.showroom_list,
+        msg: value.msg,
+        showroom_list: value.showroom_list
+       
       }),
     {
       onSuccess: () => {
@@ -275,7 +263,6 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
     return <Progress type="upload" />;
   }
 
-  //console.log('isDuplicate',isDuplicate)
   return (
     <>
       <ExpandBodyWrap open={open}>
@@ -291,11 +278,20 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
                 handleAcceptList={handleAcceptList}
                 rejectList={rejectList}
                 handleRejectList={handleRejectList}
+                pickup_date={data.pickup_date}
               />
             ))}
           </ItemContainer>
           }
           <DetailWrap active={isdrawer}>
+            {
+              !utils.isEmpty(data.canc_dt) && 
+              <Rows opt="sbt" active={isdrawer}>
+                <Box active={isdrawer}>
+                  <TxtRed>취소된 문서입니다.  취소일자 :{dayjs(data.canc_dt).format("YYYY-MM-DD")}</TxtRed>
+                </Box>
+              </Rows>
+            }
             <Rows opt="sbt" active={isdrawer}>
               <Box active={isdrawer}>
                 <InputWrap active={isdrawer}>
@@ -348,8 +344,17 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
             <Rows active={isdrawer}>
               <InputWrap active={isdrawer} margin="-10px">
                 <InputTitle>
-                  촬영일<Require>*</Require>
+                  촬영일 <Require>*</Require>
                 </InputTitle>
+                {data.shooting_date != data.shooting_end_date ?
+                <StyleTextField
+                  variant="outlined"
+                  value={dayjs.unix(data.shooting_date).format("MM/DD(ddd)")+'~'+dayjs.unix(data.shooting_end_date).format("MM/DD(ddd)")}
+                  placeholder="Shooting Date"
+                  readOnly
+                  disabled
+                />
+                :
                 <StyleTextField
                   variant="outlined"
                   value={dayjs.unix(data.shooting_date).format("MM/DD(ddd)")}
@@ -357,6 +362,7 @@ function SampleRequestTableDetail({ open, setOpen, req_no }) {
                   readOnly
                   disabled
                 />
+                }
               </InputWrap>
               <InputWrap active={isdrawer} margin="-10px">
                 <InputTitle>
@@ -813,6 +819,12 @@ const InputTitle = styled.div`
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 12px;
+`;
+
+const TxtRed = styled.div`
+  font-size: 15px;
+  font-weight: bold;
+  color:red;
 `;
 
 const StyleTextField = styled(TextField)`

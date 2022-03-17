@@ -120,13 +120,15 @@ const CancelTxt = styled.div`
   color: #999999;
 `;
 
-function AlertDialog({ open, setOpen, input, setInput, handleConfirm }) {
+function AlertDialog({ open, setOpen, input, setInput, handleConfirm,handleMsgConfirmSkip }) {
   const handleChange = useCallback(
     (e) => {
+      console.log('AlertDialog',e.target.value)
       setInput(e.target.value);
     },
     [input]
   );
+  
 
   const handleClose = useCallback(() => {
     setOpen(false);
@@ -154,7 +156,7 @@ function AlertDialog({ open, setOpen, input, setInput, handleConfirm }) {
             onChange={handleChange}
           />
           <BottomWrap>
-            <BtnWrap type="cancel" onClick={handleConfirm}>
+            <BtnWrap type="cancel" onClick={handleMsgConfirmSkip}>
               <CancelTxt>Skip</CancelTxt>
             </BtnWrap>
             <BtnWrap type="confirm" onClick={handleConfirm}>

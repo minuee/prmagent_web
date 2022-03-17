@@ -28,8 +28,12 @@ const utils = {
   isEmpty(str){
     return str === null || str === undefined || str === '' || (typeof str === 'object' && Array.isArray(str) === false && Object.keys(str).length === 0);
   },
-  convertUnixToDate(unix,reform) {
-    return moment.unix(unix).format("YYYY-MM-DD");
+  convertUnixToDate(unix,reform=null) {
+    if ( reform != null ) {
+      return moment.unix(unix).format(reform);
+    }else{
+      return moment.unix(unix).format("YYYY-MM-DD");
+    }
   },
   dateToDate(val) {
     const happyNewYear = new Date(val);
@@ -40,6 +44,24 @@ const utils = {
     const result = `${year}-${month >= 10 ? month : '0' + month}-${date >= 10 ? date : '0' + date}`
     return result;
   } ,
+
+  getDayArray(startDbTime, endDbTime) {
+    if (startDbTime > endDbTime) return []
+    const startDay = new Date(startDbTime * 1000)
+    const endDay = new Date(endDbTime * 1000)
+    endDay.setHours(23, 59, 59, 999)
+    const dates = []
+    for (let idx = 0; startDay.valueOf() + idx <= endDay.valueOf(); idx += 86400000) {
+      let newData = new Date(startDay.valueOf() + idx);
+      let year = newData.getFullYear(); 
+      let month = newData.getMonth() + 1; 
+      let date = newData.getDate();
+      let result = `${year}-${month >= 10 ? month : '0' + month}-${date >= 10 ? date : '0' + date}`;
+      
+      dates.push(result)
+    }
+    return dates;
+  },
 
   dateToDateMMDD(val) {
     const happyNewYear = new Date(val);
@@ -58,16 +80,17 @@ const utils = {
     return _fileExt;
   },
   replaceStatus1(cd) {
-    //console.log('dddd',cd);
     let retVal = "홀딩 대기";
     if ( cd == 'Confirmed' || cd == 'confirmed' ) {
       retVal = "홀딩 완료";
     }else  if ( cd == 'Pending' || cd == 'pending' ) {
       retVal = "홀딩 대기";
     }else if ( cd == 'Rejected' || cd == 'rejected' ) {
-      retVal = "홀딩 불가";
-    }else if ( cd == 'canceled' ) {
       retVal = "홀딩 거절";
+    }else if ( cd == 'Returned' || cd == 'returned' ) {
+      retVal = "홀딩 완료(종료)";
+    }else if ( cd == 'canceled' ) {
+      retVal = "홀딩 취소";
     }
     return retVal;
   },
@@ -382,7 +405,6 @@ const utils = {
     return !!email.match(EMAIL_FORMAT);
   },
   isPassword(password) {
-    console.log("CHECK:");
     if (!_.isString(password)) {
       return false;
     }

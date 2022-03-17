@@ -189,7 +189,7 @@ export default function FindIdDialog({ open, setOpen }) {
                   color="#dddddd"
                   type="outlined"
                   hoverType="darken"
-                  text="인증번호요청"
+                  text="인증 번호 요청"
                 />
               </ReqBtnBox>
             </SubTitleDiv>

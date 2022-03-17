@@ -27,7 +27,6 @@ export default function FavoritesCard({ type, data }) {
   );
   const handleCheckboxChange = (e, checked) => {
     const id = type === "showroom" ? data.showroom_no : data.brand_press_no;
-    console.log(id);
     if (checked === false) {
       removeFavorite.mutate({ type, id });
     } else {

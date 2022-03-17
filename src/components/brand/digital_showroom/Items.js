@@ -6,6 +6,7 @@ import NewIcon from "assets/new_icon.png";
 import MainIcon from "assets/main_icon.png";
 import HideIcon from "assets/icon_hide.png";
 import ImgCheckIcon from "assets/img_check_icon.png";
+import utils from "utils";
 
 function DigitalShowroomItems({
   data,
@@ -27,14 +28,12 @@ function DigitalShowroomItems({
             <ItemCardWrap
               onMouseOver={() => setMouseOver(true)}
               onMouseLeave={() => setMouseOver(false)}
-              onClick={() =>
-                handleClick(mouseOver, editOver, `${data.showroom_no}`)
-              }
+              onClick={() => handleClick(mouseOver, editOver, `${data.showroom_no}`)}
             >
               <ImgWrap>
                 <Img imgUrl={data.image_url} />
               </ImgWrap>
-              <ItemName>{data.showroom_nm}</ItemName>
+              <ItemName nameLength={utils.isEmpty(data.showroom_nm) ? 0 : data.showroom_nm.length}>{data.showroom_nm}</ItemName>
               <EditDiv
                 visible={mouseOver}
                 onMouseOver={() => setEditOver(true)}
@@ -43,11 +42,11 @@ function DigitalShowroomItems({
                 Edit
               </EditDiv>
               <IconOuterWrap>
-                {data.is_hot && (
+                {/* {data.is_hot && (
                   <IconWrap>
                     <img src={BestIcon} alt="best" style={{width:'35px'}} />
                   </IconWrap>
-                )}
+                )} */}
                 {data.is_new && (
                   <IconWrap>
                     <img src={NewIcon} alt="new" style={{width:'35px'}} />
@@ -74,13 +73,13 @@ function DigitalShowroomItems({
               <ImgWrap>
                 <Img imgUrl={data.image_url} />
               </ImgWrap>
-              <ItemName>{data.showroom_nm}</ItemName>
+              <ItemName nameLength={utils.isEmpty(data.showroom_nm) ? 0 : data.showroom_nm.length}>{data.showroom_nm}</ItemName>
               <IconOuterWrap>
-                {data.is_hot && (
+                {/* {data.is_hot && (
                   <IconWrap>
                     <img src={BestIcon} alt="best" style={{width:'35px'}} />
                   </IconWrap>
-                )}
+                )} */}
                 {data.is_new && (
                   <IconWrap>
                     <img src={NewIcon} alt="new" style={{width:'35px'}} />
@@ -91,8 +90,17 @@ function DigitalShowroomItems({
                     <img src={MainIcon} alt="new" style={{width:'35px'}} />
                   </IconWrap>
                 )}
+                {data.show_yn === 'N' && (
+                <HideOuterWrap>
+                    <IconWrap>
+                      <img src={HideIcon} alt="best" style={{width:'25px'}} />
+                    </IconWrap>
+                </HideOuterWrap>
+                )}
               </IconOuterWrap>
             </ItemCardWrap>
+            { data.show_yn === 'Y' &&
+            <>
             <SelectWrap
               active={
                 selectData.some(
@@ -111,6 +119,8 @@ function DigitalShowroomItems({
             >
               <img src={ImgCheckIcon} alt="check" />
             </CheckIcon>
+            </>
+            }
           </Container>
         ))}
     </>
@@ -130,7 +140,7 @@ const ItemCardWrap = styled.div`
   margin-left: 17px;
   margin-bottom: 34px;
   position: relative;
-
+  overflow: hidden;
   ${(props) =>
     !props.select &&
     css`
@@ -143,8 +153,8 @@ const ItemCardWrap = styled.div`
 
 const HideOuterWrap = styled.div`
   & :nth-child(1){
-    margin-top:165px;
-    margin-left:5px;    
+    margin-top:140px;
+    margin-left:10px;    
   }
 `;
 
@@ -187,9 +197,10 @@ const Img = styled.div`
 const ItemName = styled.div`
   width: 220px;
   text-align: center;
+  line-height: 20px;
   font-weight: 500;
   font-size: 16px;
-  margin-top: 19px;
+  margin-top: ${(props) => (props.nameLength > 20 ? "10px" : "20px")};
 `;
 
 const EditDiv = styled.div`
@@ -221,13 +232,13 @@ const IconWrap = styled.div`
 `;
 
 const SelectWrap = styled.div`
-  width: 210px;
-  height: 315px;
+  width: 225px;
+  height: 335px;
   background-color: #000000;
   opacity: 0.4;
   position: absolute;
-  top: 20px;
-  left: 37px;
+  top: 15px;
+  left: 30px;
   cursor: pointer;
 
   ${(props) =>

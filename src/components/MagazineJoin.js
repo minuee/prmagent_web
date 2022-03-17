@@ -45,7 +45,8 @@ const useStyles = makeStyles(() => ({
 
 const Container = styled.div`
   width: 800px;
-  height: 780px;
+  min-height: 780px;
+  height : 100%;
   padding-top: 38px;
 `;
 
@@ -305,9 +306,12 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
         history.replace("/");
       },
       (error) => {
+        console.log('errorerrorerror',error)
         if (error.code === "UsernameExistsException") {
           utils.customAlert("이미 가입된 이메일 주소입니다.");
-        } else if (error.code === "InvalidParameterException") {
+        } else if (error.code === "InvalidParameterException" && error.message == "User is already confirmed." ) {
+          utils.customAlert("이미 가입된 이메일 주소입니다.");
+        } else if (error.code === "InvalidParameterException" && error.message != "User is already confirmed." ) {
           utils.customAlert("입력필드값을 확인해 주세요.");
         } else {
           utils.customAlert(error.message);
@@ -360,10 +364,8 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
               label: item.position + " " + item.user_nm,
             }))
           );
-        console.log("success: ", data);
       },
       onError: (error) => {
-        console.log("failed: ", error);
       },
     }
   );
@@ -547,7 +549,7 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
             type="filled"
             color="#7ea1b2"
             textColor="#ffffff"
-            text="인증번호요청"
+            text="인증 번호 요청"
             handleClick={handleMobileAuth}
           />
         </InputWrap>
@@ -564,7 +566,7 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
             }}
           />
         </InputWrap>
-        <InputWrap style={{ marginBottom: "40px" }} onClick={handleTeamSearch}>
+        {/* <InputWrap style={{ marginBottom: "40px" }} onClick={handleTeamSearch}>
           <SelectBox
             width="700px"
             height="37px"
@@ -582,7 +584,7 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
             textColor="#ffffff"
             text="팀원검색"
           />
-        </InputWrap>
+        </InputWrap> */}
         <InputWrap>
           <CheckBox
             checked={checked.checkedAll}

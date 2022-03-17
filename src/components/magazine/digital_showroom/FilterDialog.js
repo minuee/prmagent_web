@@ -505,14 +505,14 @@ export default function FindIdDialog({
                   key={d.cd_id}
                   active={selectGender.find((v) => v === d.cd_id)}
                   type="detail"
-                  width="80px"
+                  width={ (d.cd_id === "SSS001" || d.cd_id === "SSS001" ) ? "80px" : "120px"}
                   onClick={() => handleGenderSelect(d.cd_id)}
                 >
                   {d.cd_id === "SSS001"
                     ? "Women"
                     : d.cd_id === "SSS002"
                     ? "Men"
-                    : "Unisex"}
+                    : "Acc & Decor"}
                 </TitleBtnTxt>
               ))}
             </TitleBtnWrap>
@@ -557,6 +557,7 @@ export default function FindIdDialog({
               select={selectCategory}
               handleSelect={handleSelect}
               handleSelectAll={handleSelectCategoryAll}
+              selectGender={selectGender}
             />
           )}
           {filterSubmenu === "Color" && (

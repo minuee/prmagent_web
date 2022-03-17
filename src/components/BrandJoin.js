@@ -45,7 +45,8 @@ const useStyles = makeStyles(() => ({
 
 const Container = styled.div`
   width: 800px;
-  height: 780px;
+  min-height: 780px;  
+  height : 100%;
   padding-top: 38px;
 `;
 
@@ -235,13 +236,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
     } else if (inputs.mobile_auth.trim() === "") {
       utils.customAlert("인증번호를 입력해주세요.");
       return;
-    }
-    // if (!utils.FalsyValueCheck(inputs, ["myTeam", "brand_id"])) {
-    //   utils.customAlert("입력 필드 값들을 확인해주세요.");
-    //   console.log("inputs : ", inputs);
-    //   return;
-    // }
-    else {
+    } else {
       if (inputs.mobile_auth !== "" && inputs.contact !== "") {
         mobileAuthCheck.mutate({
           mobile_no: inputs.contact,
@@ -285,9 +280,12 @@ export default function BrandJoin({ tos, privacy, marketing }) {
         history.replace("/");
       },
       (error) => {
+        console.log('errorerrorerror',error)
         if (error.code === "UsernameExistsException") {
           utils.customAlert("이미 가입된 이메일 주소입니다.");
-        } else if (error.code === "InvalidParameterException") {
+        } else if (error.code === "InvalidParameterException" && error.message == "User is already confirmed." ) {
+          utils.customAlert("이미 가입된 이메일 주소입니다.");
+        } else if (error.code === "InvalidParameterException" && error.message != "User is already confirmed." ) {
           utils.customAlert("입력필드값을 확인해 주세요.");
         } else {
           utils.customAlert(error.message);
@@ -342,7 +340,6 @@ export default function BrandJoin({ tos, privacy, marketing }) {
   };
 
   const handleImgUpload = ({ target }) => {
-    console.log("target : ", target.files[0]);
     const name = target.accept.includes("image/png") ? "images" : "noImage";
     let img = new Image();
     img.src = URL.createObjectURL(target.files[0]);
@@ -365,7 +362,6 @@ export default function BrandJoin({ tos, privacy, marketing }) {
           fileInput.current.value = "";
         }
       } else {
-        console.log("No Image file...");
         fileInput.current.value = "";
         return;
       }
@@ -414,10 +410,8 @@ export default function BrandJoin({ tos, privacy, marketing }) {
               label: item.position + " " + item.user_nm,
             }))
           );
-        console.log("success: ", data);
       },
       onError: (error) => {
-        console.log("failed: ", error);
       },
     }
   );
@@ -607,7 +601,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
             type="filled"
             color="#7ea1b2"
             textColor="#ffffff"
-            text="인증번호요청"
+            text="인증 번호 요청"
             handleClick={handleMobileAuth}
           />
         </InputWrap>
@@ -624,7 +618,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
             }}
           />
         </InputWrap>
-        <InputWrap onClick={handleTeamSearch}>
+       {/*  <InputWrap onClick={handleTeamSearch}>
           <SelectBox
             width="700px"
             height="37px"
@@ -642,7 +636,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
             textColor="#ffffff"
             text="팀원검색"
           />
-        </InputWrap>
+        </InputWrap> */}
         {inputs.company !== "" && !inputs.logo_yn && (
           <InputWrap style={{ marginBottom: "40px" }}>
             <TextField

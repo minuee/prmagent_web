@@ -363,7 +363,6 @@ export default function CreateRequestSample({
     handleCreate(inputs);
   };
 
-  console.log("SELECTED DATA : ", selectData);
 
   return (
     <>

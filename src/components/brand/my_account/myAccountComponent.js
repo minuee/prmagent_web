@@ -56,6 +56,8 @@ const InputWrap = styled.div`
 `;
 const SelectBoxWrap = styled.div`
   width : 100%; 
+  margin-right:20px;
+
   @media (min-width: 1920px) {    
     max-width : 370px;
   }
@@ -135,12 +137,12 @@ const InputDiv2 = styled.div`
   align-items: center;
   @media (min-width: 1920px) {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 20px;  
   }
   @media (min-width: 1440px) and (max-width: 1919px) {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 20px;  
   }
   @media (min-width: 10px) and (max-width: 1439px) {
@@ -152,12 +154,12 @@ const InputDiv2 = styled.div`
 const InputDiv4 = styled.div`
   @media (min-width: 1920px) {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 20px;  
   }
   @media (min-width: 1440px) and (max-width: 1919px) {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 20px;  
   }
   @media (min-width: 10px) and (max-width: 1439px) {
@@ -221,6 +223,7 @@ const StyleTextField2 = styled(TextField)`
     
     width: ${(props) => (props.active ? "470px" : "370px")};
   } 
+  margin-right:20px;
   .MuiOutlinedInput-input {
     padding: 13px 14px;
     border-radius: 0;
@@ -301,16 +304,8 @@ const SubDivTitle = styled.div`
   align-items: top;
   justify-content: flex-start;
   margin-bottom:10px;
-  @media (min-width: 1920px) {
-    width: 800px;
-  }
-  @media (min-width: 1440px) and (max-width: 1919px) {
-    width: 800px;
-  }
-  @media (min-width: 10px) and (max-width: 1439px) {
-    width: ${(props) => (props.active ? "600px" : "450px")};
-    
-  } 
+  width: 100%;
+  
   & + & {
     margin-bottom: 24px;
   }
@@ -318,37 +313,25 @@ const SubDivTitle = styled.div`
 const SubDiv = styled.div`
   display: flex;
   align-items: top;
-  justify-content: center;
-  @media (min-width: 1920px) {
-    width: 800px;
-  }
-  @media (min-width: 1440px) and (max-width: 1919px) {
-    width: 800px;
-  }
-  @media (min-width: 10px) and (max-width: 1439px) {
-    width: ${(props) => (props.active ? "600px" : "450px")};
-    
-  } 
+  justify-content: flex-start;
+  width: 100%;
   & + & {
     margin-bottom: 24px;
   }
 `;
 const SubText = styled.div`
+  display: flex;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: bold;
   color: #222222;
   margin-right: 70px;
+
+  .opt {
+    font-weight: 500;
+    margin-left:10px;
+  }
 `;
 const SubDateDiv = styled.div`
-  @media (min-width: 1920px) {
-    margin-left: 155px;
-  }
-  @media (min-width: 1440px) and (max-width: 1919px) {
-    margin-left: 155px;
-  }
-  @media (min-width: 10px) and (max-width: 1439px) {
-    margin-left: ${(props) => (props.active ? "155px" : "50px")};    
-  } 
   display: flex;
   color: #555555;
   font-size: 14px;
@@ -378,15 +361,6 @@ const BoxWrap = styled.div`
   align-items:flex-end;
   justify-content: flex-start;  
   margin-top:20px;
-  @media (min-width: 1920px) {
-    margin-right: 30px;
-  }
-  @media (min-width: 1440px) and (max-width: 1919px) {
-    margin-right: 30px;
-  }
-  @media (min-width: 10px) and (max-width: 1439px) {
-    margin-right: ${(props) => (props.active ? "100px" : "30px")};    
-  } 
 `;
 
 const ButtonWrap = styled.div`
@@ -448,10 +422,8 @@ const billingLogic = async ({subscript_type = "MONTH",buyer_email = "",buyer_nam
     const response = await apiObject.postBillingsBefore({ subscript_type });
 
     if (response.success && !response.already_paid) {
-      console.log("주문번호 발급 성공: ");
       const merchant_uid = response.merchant_uid; //주문번호
       const customer_uid = response.customer_uid; //고객번호
-      console.log("customer_uid ",customer_uid);
       IMP.request_pay(
         {
           // param
@@ -469,13 +441,12 @@ const billingLogic = async ({subscript_type = "MONTH",buyer_email = "",buyer_nam
         },
         async function (response) {
           if (response.success) {
-            console.log(response);
             await apiObject.postBillings({ customer_uid });
             successCallback();
             utils.customAlert("결제 성공");
           } else {
             console.error('error3333',JSON.stringify(response));
-            utils.customAlert("결제 실패");
+            utils.customAlert("결제를 취소하였습니다.");
           }
         }
       );
@@ -510,6 +481,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  cancelBtnWrap : {
+    marginLeft: "22px",color: "#7ea1b2",fontSize: 14,fontWeight: "bold",textDecoration: "underline",transform: "translateY(8px)"
+  },
   cancelBtn: {
     color: "#7ea1b2",
     fontSize: 14,
@@ -532,8 +506,7 @@ export default function MyAccountComponent({ data, position }) {
     setWindowWidth(size2.width);    
   };
 
-
-
+  let nowDate = new Date();
   const classes = useStyles();
   const [billingChangeDialog, setBillingChangeDialog] = useState(false);
   const [billingCancelDialogOpen, setBillingCancelDialogOpen] = useState(false);
@@ -545,7 +518,7 @@ export default function MyAccountComponent({ data, position }) {
     }
   );
 
-  const cancelBilling = useMutation(() => apiObject.postBillingsCancel(), {
+  const cancelBilling = useMutation((value) => apiObject.postBillingsCancel(value), {
     onSettled: () => {
       queryClient.invalidateQueries(["brand-myinfo"]);
       setBillingCancelDialogOpen(false);
@@ -722,23 +695,21 @@ export default function MyAccountComponent({ data, position }) {
   }
 
   // useEffect(() => {
-  //   console.log(subCheck);
 
   //   return () => {};
   // }, [subCheck]);
   const handleSubcheck = (event, newPayType) => {
-    console.log('event',event);
-    console.log('newPayType',newPayType);
     // if (newPayType !== null) {
     //   setSubCheck(newPayType);
     // }
-    if (data.subscription_canceled && !data.subscription_ended) {
+    /* if (data.subscription_canceled && !data.subscription_ended) {
       utils.customAlert("구독 만료 후 재신청 가능합니다.");
     } else if (!data.subscr_yn) {
       setSubCheck(newPayType);
     } else if (newPayType !== null && newPayType !== subCheck) {
       utils.customAlert("구독 취소 후 변경 가능합니다.");
-    }
+    } */
+    setSubCheck(newPayType);
   };
 
   const handleDialogClose = () => {
@@ -750,9 +721,46 @@ export default function MyAccountComponent({ data, position }) {
     e.preventDefault();
     setBillingCancelDialogOpen(true);
   };
+
+  const handleBillingBtnFree = () => {
+    console.log('subCheck',subCheck)
+    if ( subCheck == '' ) {
+      utils.customAlert('먼저 구독하기 옵션(Monthly OR Yearly)를 선택해주세요');
+      return;
+    }else{
+      if (data.subscr_yn) {
+        alertConfirm({
+          title: Constants.appName,
+          content: '현재 구독중입니다만 갱신하여 구독신청하시겠습니까?',
+          onOk: () => {
+            billingLogic({
+              subscript_type: subCheck,
+              buyer_email: data.email_adres,
+              buyer_name: data.brand_user_nm,
+              buyer_tel: data.phone_no,
+              buyer_addr: `${data.adres} ${data.adres_detail}`,
+              buyer_postcode: data.post_no,
+              successCallback: () => queryClient.invalidateQueries(["brand-myinfo"]),
+            });
+            
+          },
+          onCancel: () => {console.log('cancel')}
+        });
+      } else {
+        billingLogic({
+          subscript_type: subCheck,
+          buyer_email: data.email_adres,
+          buyer_name: data.brand_user_nm,
+          buyer_tel: data.phone_no,
+          buyer_addr: `${data.adres} ${data.adres_detail}`,
+          buyer_postcode: data.post_no,
+          successCallback: () => queryClient.invalidateQueries(["brand-myinfo"]),
+        });
+      }
+    }
+  };
+
   const handleBillingBtn = () => {
-     console.log('event',event);
-     console.log('data.subscr_yn',data.subscr_yn);
     if (data.subscr_yn) {
       setBillingChangeDialog(true);
     } else {
@@ -768,7 +776,8 @@ export default function MyAccountComponent({ data, position }) {
     }
   };
 
-  //console.log('data.next_subscr_type',data)
+  console.log('ddd',data)
+
   return (
     <>
       <Container active={isdrawer}>
@@ -916,7 +925,14 @@ export default function MyAccountComponent({ data, position }) {
                 />
               </InputDiv>
               <SubDivTitle active={isdrawer}>
-                <SubText>구독하기</SubText>
+                <SubText>
+                  구독하기
+                  { data.subscr_type === "TRIAL" &&
+                      <div className="opt">
+                        (무료 이용중)
+                      </div>
+                    }
+                </SubText>
               </SubDivTitle>
               <SubDiv active={isdrawer}>
                 <Box dispaly="flex">
@@ -940,7 +956,7 @@ export default function MyAccountComponent({ data, position }) {
                           Monthly
                         </Box>
                         <Box color="#000" fontSize={16} fontWeight="normal">
-                          60만원/월
+                        {Constants.monthlyPrice}만원/월
                         </Box>
                       </ToggleButton>
                       <ToggleButton
@@ -956,32 +972,39 @@ export default function MyAccountComponent({ data, position }) {
                           Yearly
                         </Box>
                         <Box color="#000" fontSize={16} fontWeight="normal">
-                          600만원/연(월50만원)
+                          {Constants.yearPrice}만원/연(월{Constants.yearPrice/12}만원)
                         </Box>
                       </ToggleButton>
                     </ToggleButtonGroup>
                   </Box>
+                  {( data.subscr_end_dt > parseInt(dayjs(nowDate).unix())  && data.subscr_yn && data.subscription_canceled == false ) ?
                   <Button
                     fullWidth
                     variant="contained"
                     color="secondary"
                     disableElevation
-                    disabled={
-                      (data.subscr_type === "TRIAL" &&
-                        !data.next_subscr_type) ||
-                      (data.subscr_yn && subCheck === data.next_subscr_type) ||
-                      subCheck === ""
-                    }
+                    onClick={handleBillingBtnFree}
+                    classes={{disabled: classes.diabledBtnRoot}}
+                  >
+                    구독신청하기
+                    <RightChevron />
+                  </Button>
+                  :
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    disableElevation
+                    disabled={ (data.subscr_type === "TRIAL" &&!data.next_subscr_type) || (data.subscr_yn && subCheck === data.next_subscr_type) || subCheck === ""}
                     onClick={handleBillingBtn}
-                    classes={{
-                      disabled: classes.diabledBtnRoot,
-                    }}
+                    classes={{disabled: classes.diabledBtnRoot}}
                   >
                     {data.trial_subscr_available
                       ? "Subscribe after a 3-month free trial"
                       : "구독하기 "}
                     <RightChevron />
                   </Button>
+                  }
                   {/* <Button
                     onClick={() => billingLogic({
                       subscript_type: "MONTH",
@@ -1003,31 +1026,26 @@ export default function MyAccountComponent({ data, position }) {
                     <SubDateDiv active={isdrawer}>
                       <div>구독시작일 : </div>
                       <div className="dt">
-                        {dayjs
-                          .unix(data.subscr_begin_dt)
-                          .format("YYYY-MM-DD") || ""}
+                        {dayjs.unix(data.subscr_begin_dt).format("YYYY-MM-DD") || ""}
                       </div>
                     </SubDateDiv>
                     <Box mb={1.5}></Box>
                     <SubDateDiv active={isdrawer}>
                       <div>구독만료일 : </div>
                       <div className="dt">
-                        {dayjs.unix(data.subscr_end_dt).format("YYYY-MM-DD") ||
-                          ""}
+                        {dayjs.unix(data.subscr_end_dt).format("YYYY-MM-DD") || ""}
                       </div>
+                      { data.subscription_canceled &&
+                      <div>
+                        (구독결제취소완료 {dayjs.unix(data.subscr_canc_dt).format("YYYY-MM-DD") || ""}) 
+                      </div>
+                      }
                     </SubDateDiv>
                   </div>
-                  {data.next_subscr_type && (
-                    <Box
-                      style={{
-                        marginLeft: "22px",
-                        color: "#7ea1b2",
-                        fontSize: 14,
-                        fontWeight: "bold",
-                        textDecoration: "underline",
-                        transform: "translateY(8px)",
-                      }}
-                    >
+                  {
+                  //data.next_subscr_type && ( and data.subscr_type != 'TRIAL' )
+                    ( data.subscr_end_dt > parseInt(dayjs(nowDate).unix())  && data.subscr_yn && data.subscription_canceled == false ) &&
+                    <Box className={classes.cancelBtnWrap}>
                       <Button
                         className={classes.cancelBtn}
                         href="#"
@@ -1036,7 +1054,7 @@ export default function MyAccountComponent({ data, position }) {
                         구독 결제 취소하기
                       </Button>
                     </Box>
-                  )}
+                  }
                 </BoxWrap>
               ) : (
                 <ButtonNoWrap>구독정보 없음</ButtonNoWrap>
@@ -1104,7 +1122,7 @@ export default function MyAccountComponent({ data, position }) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="billing type change dialog">
-            지금 구독을 종료해도 {dayjs.unix(data.subscr_end_dt).format("YYYY-MM-DD") || "예정 말료일"}까지는 계속 구독을 이용할 수 있습니다.
+            지금 구독을 종료해도 {dayjs.unix(data.subscr_end_dt).format("YYYY-MM-DD") || "예정 말료일"}까지는 계속 서비스를 이용할 수 있습니다.
           </DialogContentText>
           <DialogContentText id="billing type change dialog">
             {dayjs.unix(data.subscr_end_dt).format("YYYY-MM-DD") ||"예정 말료일"}에 예정된 다음 결제가 취소됩니다.
@@ -1115,7 +1133,7 @@ export default function MyAccountComponent({ data, position }) {
             닫기
           </Button>
           <Button
-            onClick={() => cancelBilling.mutate()}
+            onClick={() => cancelBilling.mutate(data.subscr_no)}
             color="primary"
             autoFocus
           >

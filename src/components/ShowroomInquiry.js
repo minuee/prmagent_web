@@ -16,8 +16,14 @@ import Constants from 'utils/constants';
 function ShowroomInquiry({ handleClose }) {
   const [showroom, setShowroom] = useState({
     contact: "",
+    contact2: "",
+    contact3: "",
     email: "",
-    inquiry_charge : ""
+    email2: "",
+    email3: "",
+    inquiry_charge : "",
+    inquiry_charge2 : "",
+    inquiry_charge3 : ""
   });
   const queryClient = useQueryClient();
 
@@ -43,9 +49,15 @@ function ShowroomInquiry({ handleClose }) {
   const showroomInquiryQuery = queryClient.getQueryData(["showroom-inquiry"]);  
   useEffect(() => {
     setShowroom({
-      contact: showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_contact : "",
-      inquiry_charge: showroomInquiryQuery !== undefined ? showroomInquiryQuery.inquiry_charge : "",
-      email: showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_email : "",
+      contact : showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_contact : "",
+      contact2 : showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_contact2 : "",
+      contact3 : showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_contact3 : "",
+      inquiry_charge : showroomInquiryQuery !== undefined ? showroomInquiryQuery.inquiry_charge : "",
+      inquiry_charge2 : showroomInquiryQuery !== undefined ? showroomInquiryQuery.inquiry_charge2 : "",
+      inquiry_charge3 : showroomInquiryQuery !== undefined ? showroomInquiryQuery.inquiry_charge3 : "",
+      email : showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_email : "",
+      email2 : showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_email2 : "",
+      email3 : showroomInquiryQuery !== undefined ? showroomInquiryQuery.showroom_inquiry_email3 : "",
     });
   }, []);
 
@@ -55,8 +67,14 @@ function ShowroomInquiry({ handleClose }) {
       apiObject.setShowroomInquiry(
         {
           showroom_inquiry_contact: showroom.contact,
+          showroom_inquiry_contact2: showroom.contact2,
+          showroom_inquiry_contact3: showroom.contact3,
           inquiry_charge: showroom.inquiry_charge,
+          inquiry_charge2: showroom.inquiry_charge2,
+          inquiry_charge3: showroom.inquiry_charge3,
           showroom_inquiry_email: showroom.email,
+          showroom_inquiry_email2: showroom.email2,
+          showroom_inquiry_email3: showroom.email3
         },
         () => {}
       ),
@@ -75,38 +93,88 @@ function ShowroomInquiry({ handleClose }) {
   return (
     <>
       <Container>
-        <Title>쇼룸 문의번호</Title>
+        <Title>쇼룸 문의번호 <Title2>(최대3명까지)</Title2></Title>
         <StyleDivider />
         <Contents>
           <InputWraps>
             <ContentsTitle>Charge</ContentsTitle>
-            <StyledTextField
-              placeholder="담당자명"
-              variant="outlined"
-              name="inquiry_charge"
-              value={showroom.inquiry_charge}
-              onChange={handleChange}
-            />
+            <FiledDataWraps>
+              <StyledTextField
+                placeholder="1st 담당자명"
+                variant="outlined"
+                name="inquiry_charge"
+                value={showroom.inquiry_charge}
+                onChange={handleChange}
+              />
+              <StyledTextField
+                placeholder="2nd 담당자명"
+                variant="outlined"
+                name="inquiry_charge2"
+                value={showroom.inquiry_charge2}
+                onChange={handleChange}
+              />
+              <StyledTextField
+                placeholder="3rd 담당자명"
+                variant="outlined"
+                name="inquiry_charge3"
+                value={showroom.inquiry_charge3}
+                onChange={handleChange}
+              />
+            </FiledDataWraps>
+           
           </InputWraps>
           <InputWraps>
             <ContentsTitle>Contact</ContentsTitle>
-            <StyledTextField
-              placeholder="Contact"
-              variant="outlined"
-              name="contact"
-              value={showroom.contact}
-              onChange={handleChange}
-            />
+            <FiledDataWraps>
+              <StyledTextField
+                placeholder="1st Contact"
+                variant="outlined"
+                name="contact"
+                value={showroom.contact}
+                onChange={handleChange}
+              />
+              <StyledTextField
+                placeholder="2nd Contact"
+                variant="outlined"
+                name="contact2"
+                value={showroom.contact2}
+                onChange={handleChange}
+              />
+                <StyledTextField
+                placeholder="3rd Contact"
+                variant="outlined"
+                name="contact3"
+                value={showroom.contact3}
+                onChange={handleChange}
+              />
+            </FiledDataWraps>
+           
           </InputWraps>
           <InputWraps>
             <ContentsTitle>E-mail</ContentsTitle>
-            <StyledTextField
-              placeholder="E-mail"
-              variant="outlined"
-              name="email"
-              value={showroom.email}
-              onChange={handleChange}
-            />
+           
+              <StyledTextField
+                placeholder="1st E-mail"
+                variant="outlined"
+                name="email"
+                value={showroom.email}
+                onChange={handleChange}
+              />
+               <StyledTextField
+                placeholder="2nd E-mail"
+                variant="outlined"
+                name="email2"
+                value={showroom.email2}
+                onChange={handleChange}
+              />
+              <StyledTextField
+                placeholder="3rd E-mail"
+                variant="outlined"
+                name="email3"
+                value={showroom.email3}
+                onChange={handleChange}
+              />
+           
           </InputWraps>
           <BottomWrap>
             <BtnWrap type="cancel" onClick={handleClose}>
@@ -131,16 +199,26 @@ function ShowroomInquiry({ handleClose }) {
 const Container = styled.div``;
 
 const Title = styled.div`
+  display: flex;
   font-weight: bold;
   font-size: 28px;
   margin-bottom: 15px;
+  align-items: center;
 `;
-
+const Title2 = styled.div`
+  font-size: 15px;
+  display: flex;
+  margin-left: 15px;
+  justify-content: center;
+  align-items: center;
+  color: #999999;
+  
+`;
 const StyleDivider = styled(Divider)`
   width: 100%;
   height: 2px;
   background-color: #dddddd;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 `;
 
 const Contents = styled.div``;
@@ -149,6 +227,9 @@ const InputWraps = styled.div`
   & + & {
     margin-top: 20px;
   }
+`;
+const FiledDataWraps = styled.div`
+  display: flex;
 `;
 
 const ContentsTitle = styled.div`
@@ -172,7 +253,7 @@ const StyledTextField = styled(TextField)`
 const BottomWrap = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 212px;
+  margin-top: 30px;
 `;
 
 const BtnWrap = styled.div`

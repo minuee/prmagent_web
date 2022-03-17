@@ -114,13 +114,13 @@ export default function TemporarySaveDialog({
               <BtnImgWrap>
                 <img src={CloseIcon} alt="close" style={{ width: "12px" }} />
               </BtnImgWrap>
-              <CancelTxt>Cancel</CancelTxt>
+              <CancelTxt>새로 등록</CancelTxt>
             </BtnWrap>
             <BtnWrap type="confirm" onClick={handleConfirm}>
               <BtnImgWrap>
                 <img src={CheckIcon} alt="check" />
               </BtnImgWrap>
-              <ConfirtTxt>Confirm</ConfirtTxt>
+              <ConfirtTxt>파일 열기</ConfirtTxt>
             </BtnWrap>
           </BottomWrap>
         </StyleDialogContent>

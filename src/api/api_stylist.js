@@ -201,7 +201,7 @@ export const apiObject = {
         brand_id,
       },
     };
-    console.log('addSampleRequest',init)
+
     return Api.post(apiName, path, init);
   },
 
@@ -376,7 +376,7 @@ export const apiObject = {
         loc_value,
       },
     };
-    console.log('editSampleRequest',init)
+
     return Api.post(apiName, path, init);
   },
 
@@ -658,7 +658,6 @@ export const apiObject = {
   },
 
   addFavorites: async ({ category, id }) => {
-    console.log(id);
     var apiName = v1Api;
     var path =
       category === "showroom"

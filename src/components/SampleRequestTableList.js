@@ -8,6 +8,7 @@ import SampleRequestTableDetail from "components/brand/sample_request/SampleRequ
 import utils from "utils";
 
 import NoimgLogo from "assets/noimage/noimg_logo_b.svg";
+import CompleteIcon from "assets/selected_icon.png";
 
 const Body = styled.div`
     width: 100%;
@@ -28,6 +29,10 @@ const List = styled.div`
     justify-content: center;
 `;
 
+const IconImg = styled.img`
+    height: 20px;
+    width: 20px;
+`;
 const LogoImg = styled.img`
     max-height: 20px;
     max-width: 60px;
@@ -65,6 +70,9 @@ function SampleRequestTableList({data,openYn,// circleColor
     return (
     <>
         <Body onClick={() => setOpen(!open)} OnTap={() => setOpen(!open)}>
+            <List width="6%">
+                { !data.is_completed &&  <IconImg src={CompleteIcon} alt="logo" />}
+            </List>
             <List width="10%">
                 <Circle circleColor={data.mgzn_color}>
                     {
@@ -78,19 +86,25 @@ function SampleRequestTableList({data,openYn,// circleColor
             </List>
             <List width="10%">
                 <ThumbImg imgUrl={data.thumnail_image_url} />
-            </List>
-            <List width="20%" weight="500">
+            </List>           
+            <List width="18%">{data.mgzn_nm}</List>
+            <List width="15%" weight="500">
                 {data.req_user_nm}
             </List>
-            <List width="24%">{data.mgzn_nm}</List>
             <List width="22%">
                 <div style={{display: "flex",flexDirection: "column",alignItems: "center",}}>
                     <div>{data.contact_user_nm}</div>
                     <div>{utils.phoneFormat(data.contact_phone_no)}</div>
                 </div>
             </List>
-            <List width="10%">
-                {dayjs.unix(data.request_date).format("YYYY-MM-DD")}
+            <List width="15%">
+                <div style={{display: "flex",flexDirection: "column",alignItems: "center",}}>
+                <div>{dayjs.unix(data.request_date).format("YYYY-MM-DD")}</div>
+                {
+                    !utils.isEmpty(data.canc_dt) && 
+                    <div style={{color:'red'}}>(취소:{dayjs(data.canc_dt).format("YYYY-MM-DD")})</div>
+                }
+                </div>
             </List>
             <List width="4%">{open ? <ExpandLessIcon /> : <ExpandMoreIcon />}</List>
         </Body>

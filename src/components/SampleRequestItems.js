@@ -6,6 +6,7 @@ import PlusIcon from "../assets/request_plus_icon.png";
 import SampleRequestPreviewDialog from "./SampleRequestPreviewDialog";
 import SampleRequestConfirmDialog from "./SampleRequestConfirmDialog";
 import MessageDialog from "./MessageDialog";
+import MessageDialogReject from "./MessageDialogReject";
 import { apiObject } from "api/api_brand";
 import Progress from "components/common/progress";
 import SelectDialog from "components/brand/scheduler/SelectDialog";
@@ -58,6 +59,8 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
   const [confirmDialog, setConfirmDialog] = useState(false);
   const [msgDialog, setMsgDialog] = useState(false);
   const [msg, setMsg] = useState("");
+  const [msgDialogReject, setMsgDialogReject] = useState(false);
+  const [msgReject, setMsgReject] = useState("");
   const [isDuplicate, setDuplicate] = useState("");
   const [selectDialog, setselectDialog] = useState(false);
 
@@ -82,21 +85,22 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
 
     const today = dayjs().format("YYYY-MM-DD");
     const shooting_dt = dayjs.unix(data.photogrf_dt).format("YYYY-MM-DD");
-    console.log('showroomNo',showroomNo)
-    let isDupCheck =  false;
+    let isDupCheck =  false;//동일일자확인
+    let isDupJustCheck =  false; //기간내 중복확인
     let isDupLookName = "";
     let strTarget_req_no = "";
     let strTarget_showroom_no = "";
     let strTarget_user_position = "";
     let strTarget_user_name = "";
     let strTarget_company_name = "";
-    rdata.reservation_list.forEach((d2, i2) => {
+    let reservation = rdata.reservation_list.length > 0 ? rdata.reservation_list : rdata.reservation_list2;
+    reservation.forEach((d2, i2) => {
       let targetShowroom = d2.showroom_no;
-      console.log('targetShowroom',targetShowroom)
-     
+      let reservation_type = d2.date_info[0].reservation_type;
+
       if ( showroomNo === targetShowroom ) {
         if ( shooting_dt === d2.date_info[0]?.photogrf_dt) {      
-          isDupCheck = true;
+          reservation_type === 'justcheck' ? isDupJustCheck = true : isDupCheck = true ;
           isDupLookName = d2.date_info[0]?.showroom_nm;
           strTarget_req_no = d2.date_info[0]?.target_req_no;
           strTarget_showroom_no = d2.date_info[0]?.target_showroom_no;
@@ -113,45 +117,12 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
         }
       }      
     }); 
-    
-    console.log('isDupCheck',isDupCheck)
-
-    if ( isDupCheck ) {
-      if (confirm( isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?")) {        
-       
-        if (dayjs(today).diff(shooting_dt, "day") > 0) {
-         /*  if (confirm("이미 촬영일이 지난 요청입니다. 승인하시겠습니까?")) {
-            setConfirmDialog(false);
-            setselectDialog(true)
-          } else {
-            setConfirmDialog(false);
-          } */
-          alertConfirm({
-            title: Constants.appName,
-            content: '이미 촬영일이 지난 요청입니다. 승인하시겠습니까?',
-            onOk: () => {
-              setConfirmDialog(false);
-              setselectDialog(true)
-            },
-            onCancel: () => {setConfirmDialog(false);}
-          });
-
-        } else {
-          setConfirmDialog(false);
-          setselectDialog(true)
-        }
-      }
+    if ( isDupCheck ) { 
       alertConfirm({
         title: Constants.appName,
         content: isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?",
         onOk: () => {
           if (dayjs(today).diff(shooting_dt, "day") > 0) {
-            /* if (confirm("이미 촬영일이 지난 요청입니다. 승인하시겠습니까?")) {
-              setConfirmDialog(false);
-              setselectDialog(true)
-            } else {
-              setConfirmDialog(false);
-            } */
             alertConfirm({
               title: Constants.appName,
               content: '이미 촬영일이 지난 요청입니다. 승인하시겠습니까?',
@@ -169,6 +140,17 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
         },
         onCancel: () => {console.log('cancle')}
       });
+    }else if ( isDupJustCheck ) {
+      await setDuplicate("");
+      alertConfirm({
+        title: Constants.appName,
+        content: "촬영기간내 " + isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?",
+        onOk: () => {
+          setConfirmDialog(false);
+          setMsgDialog(true)
+        },
+        onCancel: () => {console.log('cancle')}
+      });
     }else{
       if (dayjs(today).diff(shooting_dt, "day") > 0) {
         alertConfirm({
@@ -182,12 +164,6 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
             setConfirmDialog(false);
           }
         });
-        /*  if (confirm("이미 촬영일이 지난 요청입니다. 승인하시겠습니까?")) {
-          setConfirmDialog(false);
-          setMsgDialog(true);
-        } else {
-          setConfirmDialog(false);
-        } */
       } else {
         setConfirmDialog(false);
         setMsgDialog(true);
@@ -218,13 +194,10 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
     } */
   };
 
-  const handleReject = () => {
-    /* if (confirm("요청을 거절하시겠습니까?")) {
-      samepleRefuse.mutate({
-        req_no: data.req_no,
-        showroom_list: [showroomNo],
-      });
-    } */
+  const handleRejectConfirm = () => {  
+    setMsgDialogReject(true);  
+  }
+  const handleReject = () => {  
     alertConfirm({
       title: Constants.appName,
       content: '요청을 거절하시겠습니까?',
@@ -232,6 +205,7 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
         setMsgDialog(false);  
         samepleRefuse.mutate({
           req_no: data.req_no,
+          msg: msgReject,
           showroom_list: [showroomNo],
         });
       },
@@ -263,6 +237,7 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
       apiObject.setRequestRefuse({
         req_no: value.req_no,
         showroom_list: value.showroom_list,
+        msg: value.msg === "" ? null : value.msg,
       }),
       {
       onSuccess: () => {        
@@ -286,7 +261,7 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
   );
 
   const rdata = query.isLoading ? [] : utils.isEmpty(query.data) ? [] :query.data;  
-  //console.log('rdata',rdata)
+
 
   if (query.isLoading) {
     return <Progress type="load" />;
@@ -325,7 +300,7 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
           title={title}
           titleImg={titleImg}
           handleConfirm={handleMsgDialogOpen}
-          handleReject={handleReject}
+          handleReject={handleRejectConfirm}
         />
         <MessageDialog
           open={msgDialog}
@@ -333,6 +308,13 @@ function SampleRequestItems({ data, title, titleImg, showroomNo ,fetchNextPage }
           input={msg}
           setInput={setMsg}
           handleConfirm={handleConfirm}
+        />
+        <MessageDialogReject
+          open={msgDialogReject}
+          setOpen={setMsgDialogReject}
+          input={msgReject}
+          setInput={setMsgReject}
+          handleConfirm={handleReject}
         />
         <SelectDialog
           open={selectDialog}

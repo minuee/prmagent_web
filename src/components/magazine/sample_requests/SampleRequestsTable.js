@@ -10,7 +10,7 @@ import CheckIcon from "assets/table_check_icon.png";
 import Pagination from "components/Pagination";
 import CheckBlank from "assets/sample_check_blank.png";
 import Checked from "assets/sample_check.png";
-
+import TooltipIcon from "assets/information_icon.png";
 /* 서랍장 상태 관리 */
 import { useRecoilState } from "recoil";
 import { currentDrawer,currentPage,currentPageName } from "redux/state";
@@ -39,14 +39,14 @@ export default function SampleRequestTable({
   reqStatus,
   setReqStatus,
 }) {
+  //console.log('ddddd',data)
   const history = useHistory();
   const [currentPage, setCurrentPage] = useState(13);
   const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer);
-  console.log('datadata',data)
   return (
     <>
       <Container active={isdrawer}>
-        <HeadWrap>
+        {/* <HeadWrap>
           <HeadLeft>
             <AllCheckWrap onClick={setAllCheck}>
               {allCheck ? (
@@ -57,13 +57,30 @@ export default function SampleRequestTable({
             </AllCheckWrap>
             <DelBtn onClick={handleDelete}>Delete</DelBtn>
           </HeadLeft>
+        </HeadWrap> */}
+        <HeadWrap>
+          <HeadLeft>
+            <AllCheckWrap onClick={setAllCheck}>
+              {/* {allCheck ? (
+                <img src={CheckIcon} alt="all_check" />
+              ) : (
+                <img src={CheckBlankIcon} alt="all_check" />
+              )} */}
+            </AllCheckWrap>
+            <HeadLeftRightArea>
+              <Info><img src={TooltipIcon} alt="tooltip"  style={{height:"30px"}} /></Info>
+              <InfoTooltip>
+                <div>모든{" "}피스가{" "}미발송{" "}상태인{" "}홀딩{" "}완료{" "}건만{" "}홀딩{" "}취소{" "}가능</div>
+              </InfoTooltip>
+              {/* <DelBtn onClick={handleDelete}>홀딩요청 취소</DelBtn> */}
+            </HeadLeftRightArea>
+          </HeadLeft>
         </HeadWrap>
 
         <Table>
           <thead>
             <TheadTr>
-              <th></th>
-              <th style={{ width: "50%" }}>
+              <th style={{ width: "30%" }}>
                 <TheadDiv onClick={() => handleFilter(false, "brand")}>
                   브랜드
                   {filter.brand ? <ArrowDropUp /> : <ArrowDropDown />}
@@ -131,6 +148,7 @@ export default function SampleRequestTable({
                   )}
                 </TheadDiv>
               </th>
+              <th style={{ width: "15%" }}>관리</th>
             </TheadTr>
           </thead>
           <tbody>
@@ -141,38 +159,26 @@ export default function SampleRequestTable({
             ) : (
               data.map((d) => (
                 <TBodyTr key={d.req_no}>
-                  { d.req_status_nm == 'pending' ?
-                  <td>
-                    <TheadDiv>
-                      {checked.includes(d.req_no) ? (
-                        <img
-                          src={CheckIcon}
-                          alt="check"
-                          onClick={() => handleChecked(d.req_no)}
-                        />
-                      ) : (
-                        <img
-                          src={CheckBlankIcon}
-                          alt="check"
-                          onClick={() => handleChecked(d.req_no)}
-                        />
-                      )}
-                    </TheadDiv>
-                  </td>
-                  :
-                  <td></td>
-                  }
+                  
                   <LinkedTb onClick={() => handleDetail(d.req_no)}>
                     {d.brand_nm}
                   </LinkedTb>
                   <td>
-                    {dayjs
-                      .unix(d.expected_photograph_date)
-                      .format("YYYY-MM-DD")}
+                    {dayjs.unix(d.expected_photograph_date).format("YYYY-MM-DD")}
+                    {d.expected_photograph_date != d.expected_photograph_end_date && "~"+dayjs.unix(d.expected_photograph_end_date).format("YYYY-MM-DD")}
                   </td>
                   <td>{dayjs.unix(d.req_dt).format("YYYY-MM-DD")}</td>
-                  <td>
-                      {utils.replaceStatus1(d.req_status_nm)}</td>
+                  <td>{utils.replaceStatus1(d.req_status_nm)}</td>
+                  { ( d.req_status_nm == 'pending' || d.req_status_nm == 'rejected'  ) 
+                  ?
+                  <ButtonTb><DelBtn  onClick={() => handleChecked(d.req_no,'delete')}>홀딩 삭제</DelBtn></ButtonTb>
+                  :
+                  ( d.req_status_code == 'RS0003' && !d.is_sendout && dayjs.unix(d.expected_photograph_date).format("YYYY-MM-DD") > dayjs(new Date()).format('YYYY-MM-DD'))
+                  ?
+                  <ButtonTb><DelBtn onClick={() => handleChecked(d.req_no,'cancle')}>홀딩 취소</DelBtn></ButtonTb>
+                  :
+                  <ButtonTb></ButtonTb>
+                  }
                 </TBodyTr>
               ))
             )}
@@ -207,7 +213,25 @@ const Container = styled.div`
     min-width: ${(props) => (props.active ? "900px" : "600px")};    
   } 
 `;
-
+const InfoTooltip = styled.span`
+  position: absolute;
+  top: 150px;
+  visibility: hidden;
+  background-color: #7ea1b2;
+  padding: 10px;
+  opacity: 0;
+  transition: all 0.5s;
+  color:white;
+`;
+const Info = styled.div`
+  margin-right:10px;
+  &:hover {
+    & + span {
+      visibility: visible;
+      opacity: 0.8;
+    }
+  }
+`
 const HeadWrap = styled.div`
   display: flex;
   width: 100%;
@@ -223,15 +247,20 @@ const HeadLeft = styled.div`
   justify-content: space-between;
 `;
 
+const HeadLeftRightArea = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`;
 const AllCheckWrap = styled.div`
   width: 42px;
   height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 5px;
-  border: solid 1px #dddddd;
-  background-color: #f6f6f6;
+  --border-radius: 5px;
+  --border: solid 1px #dddddd;
+  --background-color: #f6f6f6;
   cursor: pointer;
   margin-right: 20px;
   transition: all 0.3s;
@@ -243,8 +272,8 @@ const AllCheckWrap = styled.div`
 `;
 
 const DelBtn = styled.div`
-  width: 72px;
-  height: 42px;
+  width: 82px;
+  height: 32px;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -252,9 +281,7 @@ const DelBtn = styled.div`
   border-radius: 5px;
   border: solid 1px #dddddd;
   cursor: pointer;
-  margin-right: 20px;
   transition: all 0.3s;
-
   &:hover {
     background-color: ${darken(0.1, "#ffffff")};
   }
@@ -301,7 +328,17 @@ const LinkedTb = styled.td`
     text-decoration: underline;
   }
 `;
-
+const ButtonTb = styled.td`
+  cursor: pointer;
+  display: flex;
+  height: 50px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: ${darken(0.1, "#ddd")};
+  }
+`;
 const SubMenu = styled.div`
   position: absolute;
   top: 36px;

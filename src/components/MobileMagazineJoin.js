@@ -376,10 +376,8 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
               label: item.position + " " + item.user_nm,
             }))
           );
-        console.log("success: ", data);
       },
       onError: (error) => {
-        console.log("failed: ", error);
       },
     }
   );
@@ -572,7 +570,7 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
             type="filled"
             color="#7ea1b2"
             textColor="#ffffff"
-            text="인증번호요청"
+            text="인증 번호 요청"
             handleClick={handleMobileAuth}
           />
         </InputWrap>
@@ -589,7 +587,7 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
             }}
           />
         </InputWrap>
-        <InputWrap style={{ marginBottom: "40px" }} onClick={handleTeamSearch}>
+       {/*  <InputWrap style={{ marginBottom: "40px" }} onClick={handleTeamSearch}>
           <SelectBox
             width="75vw"
             height="37px"
@@ -607,7 +605,7 @@ export default function MagazineJoin({ tos, privacy, marketing }) {
             textColor="#ffffff"
             text="팀원검색"
           />
-        </InputWrap>
+        </InputWrap> */}
         <InputWrap>
           <CheckBox
             checked={checked.checkedAll}

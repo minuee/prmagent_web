@@ -10,6 +10,7 @@ export default function SendoutContent({data,checked,handleChecked,handleClick,v
   let op = checked.filter(item => (item.date === data.date));
   const [leftData, setLeftData] = useState([]);
   const [leftShowroomData, setLeftShowroomData] = useState([]);
+  
   useEffect(async() => {
     let newLeftIdxArray = [];
     let newLeftShowroomIdxArray = [];
@@ -19,21 +20,17 @@ export default function SendoutContent({data,checked,handleChecked,handleClick,v
         newLeftIdxArray.push(element.showroom_list[0].req_no);
         newLeftArray.push(element)
       }
-      if ( !newLeftShowroomIdxArray.includes(element.showroom_list[0].req_no)) {
-        newLeftShowroomIdxArray.push(element.showroom_list[0].showroom_no);        
-      }
-    })          
-    console.log('newLeftShowroomIdxArray',newLeftShowroomIdxArray);
+      newLeftShowroomIdxArray.push({reqNo : element.showroom_list[0].req_no , showroom_no : element.showroom_list[0].showroom_no});  
+    })              
     setLeftData(newLeftArray);
+    
     setLeftShowroomData(newLeftShowroomIdxArray);
-  }, []);
+  }, [data]);
   return (
     <ContentsBox>
       <ContentsTitle>
-        <ContentsTitleText
-          //onClick={() => handleChecked(data, data.each_list.length)}
-          onClick={() => handleChecked(data, leftData.length)}
-        >
+        {data.date < Math.floor(new Date()/1000) ?
+        <ContentsTitleText onClick={() => handleChecked(data.date,leftData, leftData.length,leftShowroomData)} >
           {dayjs.unix(data.date).format("M/DD(ddd)")}
           <img
             src={ op.length > 0 ? CheckBoxOn : CheckBoxOff}
@@ -41,6 +38,9 @@ export default function SendoutContent({data,checked,handleChecked,handleClick,v
             style={{ marginLeft: "10px" }}
           />
         </ContentsTitleText>
+        :
+        <ContentsTitleText>{dayjs.unix(data.date).format("M/DD(ddd)")} </ContentsTitleText>
+        }
         <ContentsTitleSum>{/* data.each_list.length} */}</ContentsTitleSum>
       </ContentsTitle>
       <ItemWrap>
@@ -61,12 +61,13 @@ export default function SendoutContent({data,checked,handleChecked,handleClick,v
 }
 
 const ContentsBox = styled.div`
+  width:99%;
   display: flex;
-  padding: 33px 33px 13px 33px;
+  padding: 30px;
 `;
 
 const ContentsTitle = styled.div`
-  width: 190px;
+  width: 170px;
   display: flex;
   flex-direction: column;
 `;
@@ -91,4 +92,5 @@ const ContentsTitleSum = styled.div`
 const ItemWrap = styled.div`
   display: flex;
   flex-wrap: wrap;
+  max-width: calc(99% - 170px);
 `;

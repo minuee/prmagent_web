@@ -55,44 +55,31 @@ const CloseIconBox = styled.div`
 
 const Container = styled.div`
   display: flex;
+  width:100%;
 `;
 const LeftWrap = styled.div`
-  width: 190px;
+  width: 250px;
   height: 495px;
   border-right: 1px solid #dddddd;
   padding: 60px 30px;
   font-size: 16px;
   font-weight: 500;
+  overflow-y: auto;
 `;
 const RightWrap = styled.div`
   display: flex;
+  width: 750px;    
   flex-direction: column;
 `;
 const Header = styled.div`
   display: flex;
-  @media (min-width: 1920px) {
-    width: 840px;    
-  }
-  @media (min-width: 1440px) and (max-width: 1919px) {          
-    width: 840px;        
-  }
-  @media (min-width: 10px) and (max-width: 1439px) {
-    width: 800px;    
-  } 
+  width: 740px;    
   justify-content: space-between;
-  padding: 60px 30px 30px 30px;
+  padding: 60px 10px 30px 10px;
   border-bottom: 1px solid #dddddd;
 `;
 const Main = styled.div`
-  @media (min-width: 1920px) {
-    width: 840px;    
-  }
-  @media (min-width: 1440px) and (max-width: 1919px) {          
-    width: 840px;        
-  }
-  @media (min-width: 10px) and (max-width: 1439px) {
-    width: 800px;    
-  } 
+  width: 98%;    
   height: 346px;
   padding: 30px;
   overflow-y: auto;
@@ -128,7 +115,7 @@ const FavImg = styled.img`
 
 const FavText = styled.div`
   cursor: pointer;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 300;
   &:hover {
     font-weight: normal;
@@ -219,15 +206,7 @@ const SearchImgWrap = styled.div`
 `;
 
 const BrandList = styled.div`
-  @media (min-width: 1920px) {
-    width: 840px;    
-  }
-  @media (min-width: 1440px) and (max-width: 1919px) {          
-    width: 840px;        
-  }
-  @media (min-width: 10px) and (max-width: 1439px) {
-    width: 800px;    
-  } 
+  width:98%;
   display: flex;
   flex-wrap: wrap;
   margin-left: -60px;
@@ -477,7 +456,16 @@ export default function BrandsDialog({open,setOpen,data,loc,currentData = ""}) {
               <Main>
                 <BrandList>
                   {newData.length === 0 ? (
+                    <>
+                    <Brand>
+                      <BrandDiv>                          
+                        <BrandAllText onClick={() => handleClick('all')}>
+                          브랜드 전체보기
+                        </BrandAllText>
+                      </BrandDiv>                        
+                    </Brand>
                     <Brand>데이터가 없습니다.</Brand>
+                    </>
                   ) : (
                     <>
                     <Brand>

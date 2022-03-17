@@ -3,21 +3,12 @@ import styled, { css } from "styled-components";
 import ArrowRightAltIcon from "@material-ui/icons/ArrowRightAlt";
 import Constants from '../../../utils/constants';
 
-export default function SendoutDetailItems({
-  data,
-  sdata,
-  sdate,
-  idx = null,
-  handleClick = false,
-  view,
-  viewMode=null
-}) {  
+export default function SendoutDetailItems({data,sdata,sdate,idx = null,handleClick = false,view,viewMode=null}) {  
   const data2 = viewMode === 'new' ? data.showroom_list[0] : data;
-  console.log('SendoutDetailItems',data2)
+  console.log('ddddd',data2)
   return (
     <Container
       link={idx !== null ? true : false}
-      //onClick={() => handleClick(data2)}
       onClick={() => handleClick(data2,idx,sdata,sdate)}
     >
       {  view === "pickups"  ? 
@@ -42,27 +33,31 @@ export default function SendoutDetailItems({
         <Contents>
           <div className="title">
             <div>
-              {data2.target_user_nm} 
-              ({data2.target_user_position})
+              {data2.target_user_nm}{data2.target_user_position}
             </div>
             <ArrowRightAltIcon />
           </div>
           <div className="sub">          
-            {data2.req_user_nm}{/*  {data.req_user_position} */}
+            {data2.req_user_nm}{data2.req_user_position}
           </div>
+         {/*  <div className="sub2">
+            SNo {data2.req_no} 
+          </div> */}
         </Contents>
         :
         <Contents>
         <div className="title">
           <div>
-          {data2.req_user_nm}{/*  {data.req_user_position} */}
+          {data2.req_user_nm}{data2.req_user_position}
           </div>
           <ArrowRightAltIcon />
         </div>
         <div className="sub">          
-          {data2.target_user_nm} 
-          ({data2.target_user_position})
+          {data2.target_user_nm}{data2.target_user_position}
         </div>
+        {/* <div className="sub2">
+          SNo {data2.req_no} 
+        </div> */}
       </Contents>
     }
     </Container>
@@ -79,6 +74,7 @@ const Container = styled.div`
   flex-direction: column;
   overflow: hidden;
   margin-bottom: 20px;
+  margin-right:10px;
   cursor: pointer;
   
   ${(props) =>
@@ -125,6 +121,15 @@ const Contents = styled.div`
     font-size: 14px;
     font-weight: 500;
     width: 128px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sub2 {
+    font-size: 12px;
+    color:#999999;
+    font-weight: 300;
+    width: 138px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

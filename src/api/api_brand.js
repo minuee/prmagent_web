@@ -88,7 +88,6 @@ export const apiObject = {
         showroom_no
       },
     };
-    console.log('getBrandSearch',init)
     return Api.get(apiName, path, init);
   },
 
@@ -213,7 +212,6 @@ export const apiObject = {
         sample_list,
       },
     };
-    console.log('initinit',init.body)
     return Api.post(apiName, path, init, loadingFunction);
   },
 
@@ -272,7 +270,6 @@ export const apiObject = {
         delete_sample_no_list,
       },
     };
-    console.log('sample_list',sample_list)
     return Api.put(apiName, path, init, loadingFunction);
   },
 
@@ -352,6 +349,18 @@ export const apiObject = {
     return Api.post(apiName, path, init);
   },
 
+  setlimitNumber: ({ limit_days }) => {
+    var apiName = v1Api;
+    var path = "/brand/limit-days";
+    var init = {
+      body: {
+        limit_days,
+      },
+    };
+
+    return Api.post(apiName, path, init);
+  },
+
   getShowroomInquiry: () => {
     var apiName = v1Api;
     var path = "/brand/showroom-inquiry";
@@ -362,19 +371,31 @@ export const apiObject = {
 
   setShowroomInquiry: ({
     showroom_inquiry_contact,
+    showroom_inquiry_contact2,
+    showroom_inquiry_contact3,
     inquiry_charge,
-    showroom_inquiry_email
+    inquiry_charge2,
+    inquiry_charge3,
+    showroom_inquiry_email,
+    showroom_inquiry_email2,
+    showroom_inquiry_email3
   }) => {
     var apiName = v1Api;
     var path = "/brand/showroom-inquiry";
     var init = {
       body: {
         showroom_inquiry_contact,
+        showroom_inquiry_contact2,
+        showroom_inquiry_contact3,
         showroom_inquiry_email,
-        inquiry_charge
+        showroom_inquiry_email2,
+        showroom_inquiry_email3,
+        inquiry_charge,
+        inquiry_charge2,
+        inquiry_charge3
       },
     };
-
+    console.log('dddd',init)
     return Api.post(apiName, path, init);
   },
 
@@ -535,16 +556,16 @@ export const apiObject = {
         model_type,
       },
     };
-    console.log('getUrgency',path)
     return Api.get(apiName, path, init);
   },
 
-  getRequests: ({ model_type, page, limit }) => {
+  getRequests: ({ model_type,isConfirm, page, limit }) => {
     var apiName = v1Api;
     var path = "/brand/showroom-request-requests/";
     var init = {
       queryStringParameters: {
         model_type,
+        isConfirm,
         page,
         limit,
       },
@@ -571,7 +592,7 @@ export const apiObject = {
         isDuplicateInfo : isDuplicate
       },
     };
-    console.log('setRequestConfirm',showroom_list,req_no)
+    console.log("setRequestConfirm",init)
     return Api.post(apiName, path, init);
   },
 
@@ -579,7 +600,6 @@ export const apiObject = {
     var apiName = v1Api;
     var path = `/brand/showroom-request/${req_no}`;
     var init = {};
-    console.log('detailSampleRequest brand',req_no)
     return Api.get(apiName, path, init);
   },
 
@@ -624,7 +644,6 @@ export const apiObject = {
         month,
       },
     };
-    console.log('dddd',init)
     return Api.get(apiName, path, init);
   },
 
@@ -718,7 +737,6 @@ export const apiObject = {
           }
         }
       })
-      //console.log('newArr',newArr)
       init.body.add_img_list = newArr;
     } else {
       init.body.add_img_list = [];
@@ -745,7 +763,7 @@ export const apiObject = {
         return error;
       }
     }
-    //console.log('setPress',init)
+
     return Api.post(apiName, path, init);
   },
 
@@ -811,13 +829,10 @@ export const apiObject = {
     } else {
       init.body.main_img_adres = main_img_adres;
     }
-    //console.log('add_img_fileadd_img_fileadd_img_file',add_img_file)
-    /* let newArr = [];
+   /* let newArr = [];
     if (add_img_file.img_adres.length > 0 ) {      
       await add_img_file.img_adres.forEach(async(d) => {
-        //console.log('ddddddd',typeof d)
         if (typeof d == 'object') {
-          //console.log('dddddddfileee',d)
           let file_name = uuidv4();
           let file_extension = d.name.substring(d.name.lastIndexOf("."), d.name.length).toLowerCase();
           let key = `press/images/${file_name}${file_extension}`;
@@ -892,7 +907,6 @@ export const apiObject = {
     } else {
       init.body.word_file_adres = word_file_adres;
     }
-    console.log('editPress222222',init)
     return Api.put(apiName, path, init);
   },
 
@@ -946,6 +960,18 @@ export const apiObject = {
   getNoticeDetail: async ({ notice_no }) => {
     var apiName = v1Api;
     var path = `/brand/notice/${notice_no}`;
+    var init = {
+      queryStringParameters: {
+        notice_no,
+      },
+    };
+
+    return await Api.get(apiName, path, init);
+  },
+
+  getNoticeReadCheck: async (notice_no) => {
+    var apiName = v1Api;
+    var path = `/brand/notice_read/${notice_no}`;
     var init = {
       queryStringParameters: {
         notice_no,
@@ -1041,6 +1067,7 @@ export const apiObject = {
         limit: 10,
       },
     };
+    console.log('getReqSearch',init)
     return await Api.get(apiName, path, init);
   },
   getScheduleSearch: async ({ page, search_text }) => {
@@ -1080,7 +1107,18 @@ export const apiObject = {
     };
     return await Api.get(apiName, path, init);
   },
-
+  getShowroomMemo: ({showroom_no,date}) => {
+    console.log('getShowroomMemo', showroom_no)
+    var apiName = v1Api;
+    var path = `/brand/showroom-memo`;
+    var init = {
+      queryStringParameters: {
+        showroom_no: showroom_no,
+        date
+      },
+    }
+    return Api.get(apiName, path, init)
+  },
   // scheduler
   getScheduler: ({ startDate, endDate, season_year, season_cd_id, gender }) => {
     var apiName = v1Api;
@@ -1165,47 +1203,47 @@ export const apiObject = {
   },
 
   // SENDOUTS
-  getSendouts: async ({ start_date, fin_date, pageState = "sendout" }) => {
+  getSendouts: async ({ start_date, fin_date, is_not_finished,pageState = "sendout" }) => {
     var apiName = v1Api;
-    var path =
-      pageState === "sendout"
-        ? `/brand/sendout-schedule`
-        : `/brand/return-schedule`;
+    var path = pageState === "sendout" ? `/brand/sendout-schedule` : `/brand/return-schedule`;
     var init = {
       queryStringParameters: {
         start_date,
         fin_date,
+        not_finished : is_not_finished
       },
     };
-    console.log('getSendoutSearch',init)
+   
     return await Api.get(apiName, path, init);
   },
-  getSendoutDetail: async ({ date,showroom_no,showroomList=[],reqnoList=[] }) => {
+  getSendoutDetail: async ({ date,showroom_no,showroomList=[],reqnoList=[],is_list = 'null' }) => {
     var apiName = v1Api;
     var path = `/brand/sendout-detailed/${date}`;
     var init = {
       queryStringParameters: {
         date,
         showroom_no,
+        is_list,
         showroomList : JSON.stringify(showroomList),
         reqnoList : JSON.stringify(reqnoList)
       },
     };
-    console.log('getSendoutDetail',init);    
+
     return await Api.get(apiName, path, init);
   },
-  getReturnDetail: async ({ date,showroom_no,showroomList=[],reqnoList=[] }) => {
+  getReturnDetail: async ({ date,showroom_no,showroomList=[],reqnoList=[],is_list = 'null' }) => {
     var apiName = v1Api;
     var path = `/brand/return-detailed/${date}`;
     var init = {
       queryStringParameters: {
         date,
         showroom_no,
+        is_list,
         showroomList : JSON.stringify(showroomList),
         reqnoList : JSON.stringify(reqnoList)
       },
     };
-    console.log('getReturnDetail',init);    
+    
     return await Api.get(apiName, path, init);
   },
   getSendoutDetailReq: async ({ req_no,showroom_no}) => {
@@ -1295,14 +1333,16 @@ export const apiObject = {
 
     return await Api.post(apiName, path, init);
   },
-  postBillingsCancel: async () => {
+  postBillingsCancel: async (subscr_no) => {
     var apiName = v1Api;
     var path = `/brand/billings/cancel`;
 
     var init = {
-      body: {},
+      body: {
+        subscr_no
+      },
     };
-
+    console.log('init',init)
     return await Api.post(apiName, path, init);
   },
 };

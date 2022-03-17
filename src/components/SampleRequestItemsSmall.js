@@ -83,21 +83,21 @@ function SampleRequestItemsSmall({ data, title, titleImg, showroomNo }) {
 
     const today = dayjs().format("YYYY-MM-DD");
     const shooting_dt = dayjs.unix(data.photogrf_dt).format("YYYY-MM-DD");
-    console.log('showroomNo',showroomNo)
-    let isDupCheck =  false;
+    let isDupCheck =  false;//동일일자확인
+    let isDupJustCheck =  false; //기간내 중복확인
     let isDupLookName = "";
     let strTarget_req_no = "";
     let strTarget_showroom_no = "";
     let strTarget_user_position = "";
     let strTarget_user_name = "";
     let strTarget_company_name = "";
-    rdata.reservation_list.forEach((d2, i2) => {
+    let reservation = rdata.reservation_list.length > 0 ? rdata.reservation_list : rdata.reservation_list2;
+    reservation.forEach((d2, i2) => {
       let targetShowroom = d2.showroom_no;
-      console.log('targetShowroom',targetShowroom)
-     
+      let reservation_type = d2.date_info[0].reservation_type;
       if ( showroomNo === targetShowroom ) {
         if ( shooting_dt === d2.date_info[0]?.photogrf_dt) {      
-          isDupCheck = true;
+          reservation_type === 'justcheck' ? isDupJustCheck = true : isDupCheck = true ;
           isDupLookName = d2.date_info[0]?.showroom_nm;
           strTarget_req_no = d2.date_info[0]?.target_req_no;
           strTarget_showroom_no = d2.date_info[0]?.target_showroom_no;
@@ -117,22 +117,6 @@ function SampleRequestItemsSmall({ data, title, titleImg, showroomNo }) {
     
     
     if ( isDupCheck ) {
-      /* if (confirm( isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?")) {        
-       
-        if (dayjs(today).diff(shooting_dt, "day") > 0) {
-          if (confirm("이미 촬영일이 지난 요청입니다. 승인하시겠습니까?")) {
-            setConfirmDialog(false);
-            //setMsgDialog(true);
-            setselectDialog(true)
-          } else {
-            setConfirmDialog(false);
-          }
-        } else {
-          setConfirmDialog(false);
-          //setMsgDialog(true);
-          setselectDialog(true)
-        }
-      } */
       alertConfirm({
         title: Constants.appName,
         content: isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?",
@@ -140,20 +124,28 @@ function SampleRequestItemsSmall({ data, title, titleImg, showroomNo }) {
           if (dayjs(today).diff(shooting_dt, "day") > 0) {
             if (confirm("이미 촬영일이 지난 요청입니다. 승인하시겠습니까?")) {
               setConfirmDialog(false);
-              //setMsgDialog(true);
               setselectDialog(true)
             } else {
               setConfirmDialog(false);
             }
           } else {
             setConfirmDialog(false);
-            //setMsgDialog(true);
             setselectDialog(true)
           }
         },
         onCancel: () => {console.log('cancel')}
       });
-
+    }else if ( isDupJustCheck ) {
+      alertConfirm({
+        title: Constants.appName,
+        content: "기간내 " + isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?",
+        onOk: () => {
+          setType(type);
+          setOpen(false);
+          setMsgDialog(true)
+        },
+        onCancel: () => {console.log('cancle')}
+      });
     }else{
       if (dayjs(today).diff(shooting_dt, "day") > 0) {
         alertConfirm({
@@ -165,12 +157,6 @@ function SampleRequestItemsSmall({ data, title, titleImg, showroomNo }) {
           },
           onCancel: () => {setConfirmDialog(false);}
         });
-        /* if (confirm("이미 촬영일이 지난 요청입니다. 승인하시겠습니까?")) {
-          setConfirmDialog(false);
-          setMsgDialog(true);
-        } else {
-          setConfirmDialog(false);
-        } */
       } else {
         setConfirmDialog(false);
         setMsgDialog(true);
@@ -268,7 +254,6 @@ function SampleRequestItemsSmall({ data, title, titleImg, showroomNo }) {
   );
 
   const rdata = query.isLoading ? [] : utils.isEmpty(query.data) ? [] :query.data;  
-  console.log('isDuplicate2',isDuplicate)
 
   if (query.isLoading) {
     return <Progress type="load" />;

@@ -215,15 +215,13 @@ export default function Header() {
         },
         async (data) => {
           // 성공처리
-          console.log("signOutFunction -> data", data);
-  
+
           dispatch({
             type: "SIGN_OUT",
           });
         },
         (error) => {
           // 실패처리,
-          console.log("signOutFunction -> error", error);
           alert(error.message);
         }
       );

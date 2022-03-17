@@ -390,7 +390,7 @@ export default function UploadDialog_v2({
             uploadYn: true,
           });
         } else {
-          console.log("Input name is wrong!");
+          console.log("No Image file...");
         }
       } else {
         console.log("No Image file...");

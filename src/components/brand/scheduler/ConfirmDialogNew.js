@@ -138,7 +138,7 @@ export default function ConfirmDialog({
   const [msg, setMsg] = useState(null);
   const [type, setType] = useState(null);
   //const [isDuplicate, setDuplicate] = useState("");
-
+  console.log('msgmsgmsgmsg',msg)
   const [selectDialog, setselectDialog] = useState(false);
 
   const handleClose = () => {
@@ -147,13 +147,10 @@ export default function ConfirmDialog({
 
   const handleSubmit = async(type) => {
     if ( type === 'confirm' ) {
-      //console.log('data.photogrf_dt',data[0].photogrf_dt)
-      //const today = dayjs().format("YYYY-MM-DD");
       const shooting_dt = data[0].photogrf_dt;
-      // console.log('shooting_dt',shooting_dt)
       const showroomNo = inputs.showroom_no[0];
-      //console.log('showroomNo',showroomNo)
-      let isDupCheck =  false;
+      let isDupCheck =  false;//동일일자확인
+      let isDupJustCheck =  false; //기간내 중복확인
       let isDupLookName = "";
       let strTarget_req_no = "";
       let strTarget_showroom_no = "";
@@ -161,12 +158,13 @@ export default function ConfirmDialog({
       let strTarget_user_name = "";
       let strTarget_company_name = "";
       
-      rdata.reservation_list.forEach((d2, i2) => {
+      let reservation = rdata.reservation_list.length > 0 ? rdata.reservation_list : rdata.reservation_list2;
+      reservation.forEach((d2, i2) => {
         let targetShowroom = d2.showroom_no;
-        console.log('targetShowroom',targetShowroom);      
+        let reservation_type = d2.date_info[0].reservation_type;
         if ( showroomNo === targetShowroom ) {
           if ( shooting_dt === d2.date_info[0]?.photogrf_dt) {      
-            isDupCheck = true;
+            reservation_type === 'justcheck' ? isDupJustCheck = true : isDupCheck = true ;
             isDupLookName = d2.date_info[0]?.showroom_nm;
             strTarget_req_no = d2.date_info[0]?.target_req_no;
             strTarget_showroom_no = d2.date_info[0]?.target_showroom_no;
@@ -183,24 +181,30 @@ export default function ConfirmDialog({
           }
         }      
       }); 
-      //console.log('isDupCheck',isDupCheck);
-      if ( isDupCheck ) {
-        /* if (confirm( isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?")) {
-          
-        } */
 
+      if ( isDupCheck ) {
         alertConfirm({
           title: Constants.appName,
           content: isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?",
           onOk: () => {
-            console.log('isDupLookName',isDupLookName);
             setType(type);
             setOpen(false);
             setselectDialog(true)
           },
           onCancel: () => {console.log('cancle')}
         });
-
+      }else if ( isDupJustCheck ) {
+          setDuplicate("");
+          alertConfirm({
+            title: Constants.appName,
+            content: "기간내 " + isDupLookName + "이(가) ["+strTarget_company_name + "]" + strTarget_user_name+ "에 승인된 정보가 있습니다. 그래도 승인하시겠습니까?",
+            onOk: () => {
+              setType(type);
+              setOpen(false);
+              setMsgDialog(true)
+            },
+            onCancel: () => {console.log('cancle')}
+          });
 
       }else{
         setMsgDialog(true);
@@ -215,9 +219,15 @@ export default function ConfirmDialog({
 
   };
 
-  const handleMsgConfirm = () => {
+  const handleMsgConfirm = async() => {
+    await setInputs({ ...inputs, msg: msg });
     setMsgDialog(false);
-    setInputs({ ...inputs, msg: msg });
+    handleConfirm(type);
+  };
+
+  const handleMsgConfirmSkip = async() => {
+    await setInputs({ ...inputs, msg: null });
+    setMsgDialog(false);
     handleConfirm(type);
   };
 
@@ -263,6 +273,7 @@ export default function ConfirmDialog({
         input={msg}
         setInput={setMsg}
         handleConfirm={handleMsgConfirm}
+        handleMsgConfirmSkip={handleMsgConfirmSkip}
       />
       <SelectDialog
         open={selectDialog}

@@ -17,6 +17,7 @@ import SelectInput from "components/common/selectInput";
 import SelectInputAddress from "components/magazine/sample_requests/selectInputAddress";
 // import DatePicker from "components/DatePicker";
 import DatePicker from "components/SampleDatePicker";
+import DateNewPicker from "components/SampleDatePicker/new";
 import TimePicker from "components/TimePicker";
 import AddressDialog from "components/AddressDialog";
 import ModelAddBtn from "assets/model_add_btn.svg";
@@ -543,7 +544,6 @@ export default function TemporaryComponent({
   handleTemporarySave,
 }) {
 
-  console.log('imsiimsiimsi',imsi);
   const [inputs, setInputs] = useState({
     photogrf_concept: imsi.photogrf_concept,
     picalbm_chk: imsi.picalbm_chk,
@@ -565,6 +565,7 @@ export default function TemporaryComponent({
   });
   const [showroomList, setShowroomList] = useState(data.showroom_info);
   const [shootingDt, setShootingDt] = useState(imsi.photogrf_dt || "");
+  const [shootingEndDt, setShootingEndDt] = useState(imsi.photogrf_end_dt || "");
   const [pickupDt, setPickupDt] = useState(imsi.duty_recpt_dt || "");
   const [returningDt, setReturningDt] = useState(imsi.return_prearnge_dt || "");
   const [startTime, setStartTime] = useState({
@@ -732,7 +733,6 @@ export default function TemporaryComponent({
       }
       setPickupDt(pDt);
       setReturningDt(rDt);
-      // console.log("pdt : ", pDt, ", rdt : ", rDt);
     //}
   };
 
@@ -743,6 +743,7 @@ export default function TemporaryComponent({
     let requestBody = {
       duty_recpt_dt: dayjs(pickupDt).unix(),
       photogrf_dt: dayjs(shootingDt).unix(),
+      photogrf_end_dt: dayjs(shootingEndDt).unix(),
       begin_dt: utils.changeHour(startTime.ampm, startTime.hour),
       end_dt: utils.changeHour(endTime.ampm, endTime.hour),
       return_prearnge_dt: dayjs(returningDt).unix(),
@@ -777,6 +778,7 @@ export default function TemporaryComponent({
       brand_id: brandId,
       duty_recpt_dt: pickupDt,
       photogrf_dt: shootingDt,
+      photogrf_end_dt: shootingEndDt,
       begin_dt: {
         hour: startTime.hour,
         ampm: startTime.ampm,
@@ -809,8 +811,6 @@ export default function TemporaryComponent({
       loc_yn: inputs.loc_yn,
       loc_value: inputs.loc_value,
     };
-
-    // console.log("REQUEST BODY : ", requestBody);
     handleTemporarySave(requestBody);
   };
 
@@ -923,10 +923,12 @@ export default function TemporaryComponent({
                 <InputTitle>
                   촬영일<Require>*</Require>
                 </InputTitle>
-                <DatePicker
+                <DateNewPicker
                   shooting_yn={true}
                   dt={shootingDt}
+                  end_dt={shootingEndDt}
                   setDt={setShootingDt}
+                  setEndDt={setShootingEndDt}
                   unavailDt={unavailDt}
                   initDt={today}
                   setInitDt={setToday}

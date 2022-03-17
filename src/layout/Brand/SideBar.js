@@ -112,7 +112,6 @@ export default function SideBar({ open }) {
       },
       async (data) => {
         // 성공처리
-        console.log("signOutFunction -> data", data);
 
         dispatch({
           type: "SIGN_OUT",
@@ -120,7 +119,6 @@ export default function SideBar({ open }) {
       },
       (error) => {
         // 실패처리,
-        console.log("signOutFunction -> error", error);
         utils.customAlert(error.message);
       }
     );

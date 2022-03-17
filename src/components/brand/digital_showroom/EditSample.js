@@ -333,14 +333,12 @@ export default function AddSample({
   };
 
   const handleColorChange = async(d) => {
-    console.log('handleColorChange',d)
     let newArr = sample[idx].color_cd_id;
     if ( newArr.includes(d) ) {
       await (newArr = newArr.filter((c) => c !== d))
     }else {
       await newArr.push(d);
     }
-    console.log('newArr',newArr)
     sample[idx].color_cd_id = newArr;
     setSample([...sample]);
   };
@@ -433,7 +431,6 @@ export default function AddSample({
 
   const sampleCdQuery = queryClient.getQueryData(["sample-cd-info"]);
 
-  console.log("Sample List [", idx, "] :", sample[idx]);
 
   return (
     <>

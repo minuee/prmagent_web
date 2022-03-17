@@ -229,7 +229,6 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
             loc_yn: inputs.loc_yn,
             loc_value: inputs.loc_value,
         };
-        console.log('requestBody',requestBody)
         handleSubmit(requestBody);
     };
 

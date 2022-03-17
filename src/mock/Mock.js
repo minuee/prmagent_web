@@ -284,7 +284,7 @@ export const FILTER_DATA = [
     value: ["Belt", "Eyewear", "Tie", "Hat", "Scarf & Gloves"],
   },
   {
-    name: "Deco",
+    name: "Decor",
     value: [
       "Candle",
       "Furniture",
@@ -1251,7 +1251,7 @@ export const CATEGORY_OPTIONS = [
   "Bag",
   "Jewerly",
   "Accessory",
-  "Deco",
+  "Decor",
   "Shoes",
 ];
 
@@ -1269,7 +1269,7 @@ export const MATERIAL_OPTIONS = [
   "Etc",
 ];
 
-export const GENDER_OPTIONS = ["Women", "Men", "Unisex"];
+export const GENDER_OPTIONS = ["Women", "Men", "Genderless"];
 
 export const BUYING_OPTIONS = [
   "Korea",
@@ -1448,7 +1448,7 @@ export const LOOKBOOK_TEST_DATA = [
     lookbook_no: "3",
     lookbook_nm: "20 S/S WATCH COLLECTION",
     season: "Pre-Fall",
-    gender: "Unisex",
+    gender: "Genderless",
     reg_dt: "2020-08-30",
     made_for: "ELLE",
   },
@@ -1456,7 +1456,7 @@ export const LOOKBOOK_TEST_DATA = [
     lookbook_no: "4",
     lookbook_nm: "CARRYOVER DECOR COLLECTION",
     season: "Fall",
-    gender: "Unisex",
+    gender: "Genderless",
     reg_dt: "2020-08-30",
     made_for: "ARENA",
   },
@@ -1496,7 +1496,7 @@ export const LOOKBOOK_TEST_DATA = [
     lookbook_no: "9",
     lookbook_nm: "CARRYOVER DECOR COLLECTION",
     season: "Pre-Spring",
-    gender: "Unisex",
+    gender: "Genderless",
     reg_dt: "2020-08-30",
     made_for: "ARENA",
   },
@@ -1504,7 +1504,7 @@ export const LOOKBOOK_TEST_DATA = [
     lookbook_no: "10",
     lookbook_nm: "20 S/S GUCCI WOMEN COLLECTION",
     season: "PreSpring",
-    gender: "Unisex",
+    gender: "Genderless",
     reg_dt: "2020-08-30",
     made_for: "VOGUE",
   },

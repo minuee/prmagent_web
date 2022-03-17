@@ -16,7 +16,7 @@ import ImgCheckIcon from "assets/check_icon_large.svg";
 import StarIcon from "assets/star_icon.svg";
 import SelectInput from "components/common/selectInput";
 import DatePicker from "components/DatePicker";
-import SampleDatePicker from "components/SampleDatePicker";
+import SampleDatePicker from "components/SampleDatePicker/new";
 import TimePicker from "components/TimePicker";
 import AddressDialog from "components/AddressDialog";
 import ModelAddBtn from "assets/model_add_btn.svg";
@@ -67,6 +67,9 @@ export default function AddComponent({
   const [isStatusCD, setStatusCD] =  useState(data.req_status_cd) 
   const [shootingDt, setShootingDt] = useState(
     dayjs.unix(data.shooting_date).toISOString()
+  );
+  const [shootingEndDt, setShootingEndDt] = useState(
+    dayjs.unix(data.shooting_end_date).toISOString()
   );
   const [pickupDt, setPickupDt] = useState(
     dayjs.unix(data.pickup_date).toISOString()
@@ -126,69 +129,49 @@ export default function AddComponent({
   };
 
   
-  const handleShootingDtClick = async(date) => {
+  const handleShootingDtClick = async(sdate,edate) => {
     const today = dayjs().format("YYYY-MM-DD");
-    const shooting_dt = moment(date).format("YYYY-MM-DD");
-    console.log('today',today)
-    console.log('shooting_dt',shooting_dt)
-   /*  const dateFormat = moment(date).format("YYYY-MM-DD");
-    const TodayFormat = moment().format("YYYY-MM-DD");
-    let reservationArray =  [];
-    await data.showroom_info.forEach((d2, i2) => {
-        if ( !utils.isEmpty(d2.reservation_list) ) {
-            reservationArray = reservationArray.concat(d2.reservation_list);
-        }
-    });        
-    const isCheck = (element) => ( element.photogrf_dt == dateFormat || element.duty_recpt_dt == dateFormat || element.return_prearnge_dt == dateFormat);
-    if ( reservationArray.some(isCheck) ) {
-        utils.customAlert('해당일자에는 이미 예약이 되어 있습니다.');
-        setShootingDt(dayjs.unix(data.shooting_date).toISOString())       
-        return false;
-    }else if ( TodayFormat >=  dateFormat) {
-        utils.customAlert('오늘보다 이전일자로는 예약이 불가합니다.');
-        setShootingDt(dayjs.unix(data.shooting_date).toISOString())  
-        return false;
-    }else{ */
+    const shooting_dt = moment(sdate).format("YYYY-MM-DD");
+ 
+    if ( today > shooting_dt) {
+      utils.customAlert('오늘보다 이전일자는 불가합니다.');
+      setShootingDt(dayjs.unix(data.shooting_date).toISOString());
+      return;
+    }else{
 
-        if ( today > shooting_dt) {
-          utils.customAlert('오늘보다 이전일자는 불가합니다.');
-          return;
-        }else{
+      let pDt = moment(sdate).subtract({ day: 1 }).day() === 0
+          ? moment(sdate).subtract({ day: 3 }).format("YYYY-MM-DD")
+          : moment(sdate).subtract({ day: 1 }).day() === 6
+          ? moment(sdate).subtract({ day: 2 }).format("YYYY-MM-DD")
+          : moment(sdate).subtract({ day: 1 }).format("YYYY-MM-DD");
+      for (let i = 0; i < unavailDt.length; i++) {unavailDt.find((v) => v === pDt &&
+          (pDt =
+              moment(pDt).subtract({ day: 1 }).day() === 0
+              ? moment(pDt).subtract({ day: 3 }).format("YYYY-MM-DD")
+              : moment(pDt).subtract({ day: 1 }).day() === 6
+              ? moment(pDt).subtract({ day: 2 }).format("YYYY-MM-DD")
+              : moment(pDt).subtract({ day: 1 }).format("YYYY-MM-DD"))
+          );
+      }
 
-          let pDt = moment(date).subtract({ day: 1 }).day() === 0
-              ? moment(date).subtract({ day: 3 }).format("YYYY-MM-DD")
-              : moment(date).subtract({ day: 1 }).day() === 6
-              ? moment(date).subtract({ day: 2 }).format("YYYY-MM-DD")
-              : moment(date).subtract({ day: 1 }).format("YYYY-MM-DD");
-          for (let i = 0; i < unavailDt.length; i++) {unavailDt.find((v) => v === pDt &&
-              (pDt =
-                  moment(pDt).subtract({ day: 1 }).day() === 0
-                  ? moment(pDt).subtract({ day: 3 }).format("YYYY-MM-DD")
-                  : moment(pDt).subtract({ day: 1 }).day() === 6
-                  ? moment(pDt).subtract({ day: 2 }).format("YYYY-MM-DD")
-                  : moment(pDt).subtract({ day: 1 }).format("YYYY-MM-DD"))
-              );
-          }
-
-          let rDt = moment(date).add({ day: 1 }).day() === 6
-              ? moment(date).add({ day: 3 }).format("YYYY-MM-DD")
-              : moment(date).add({ day: 1 }).day() === 0
-              ? moment(date).add({ day: 2 }).format("YYYY-MM-DD")
-              : moment(date).add({ day: 1 }).format("YYYY-MM-DD");
-          for (let i = 0; i < unavailDt.length; i++) {
-            unavailDt.find((v) =>v === rDt &&
-              (rDt =
-                  moment(rDt).add({ day: 1 }).day() === 6
-                  ? moment(rDt).add({ day: 3 }).format("YYYY-MM-DD")
-                  : moment(rDt).add({ day: 1 }).day() === 0
-                  ? moment(rDt).add({ day: 2 }).format("YYYY-MM-DD")
-                  : moment(rDt).add({ day: 1 }).format("YYYY-MM-DD"))
-              );
-          }
-          setPickupDt(pDt);
-          setReturningDt(rDt);
-        }
-    //}
+      let rDt = moment(edate).add({ day: 1 }).day() === 6
+          ? moment(edate).add({ day: 3 }).format("YYYY-MM-DD")
+          : moment(edate).add({ day: 1 }).day() === 0
+          ? moment(edate).add({ day: 2 }).format("YYYY-MM-DD")
+          : moment(edate).add({ day: 1 }).format("YYYY-MM-DD");
+      for (let i = 0; i < unavailDt.length; i++) {
+        unavailDt.find((v) =>v === rDt &&
+          (rDt =
+              moment(rDt).add({ day: 1 }).day() === 6
+              ? moment(rDt).add({ day: 3 }).format("YYYY-MM-DD")
+              : moment(rDt).add({ day: 1 }).day() === 0
+              ? moment(rDt).add({ day: 2 }).format("YYYY-MM-DD")
+              : moment(rDt).add({ day: 1 }).format("YYYY-MM-DD"))
+          );
+      }
+      setPickupDt(pDt);
+      setReturningDt(rDt);
+    }
   };
 
   const handleChangeStartTime = (ampm, newTime) => {
@@ -249,6 +232,7 @@ export default function AddComponent({
     let requestBody = {
       duty_recpt_dt: dayjs(pickupDt).unix(),
       photogrf_dt: dayjs(shootingDt).unix(),
+      photogrf_end_dt: dayjs(shootingEndDt).unix(),
       begin_dt: utils.changeHour(startTime.ampm, startTime.hour),
       end_dt: utils.changeHour(endTime.ampm, endTime.hour),
       return_prearnge_dt: dayjs(returningDt).unix(),
@@ -278,7 +262,6 @@ export default function AddComponent({
       loc_value: inputs.loc_value,
     };
     handleSubmit(requestBody);
-    // console.log("REQ BODY : ", requestBody);
   };
 
   const contact_options = options.contact_info.map((d) => ({
@@ -303,7 +286,6 @@ export default function AddComponent({
     async () => await apiObject.getBrandHoliday({year,brand_id: brandId,})
   );
   /* let reservationArray =  [];
-  //console.log("REQ BODY : ", data);
   data.reservation_list.forEach((d2, i2) => {
     //reservationArray = reservationArray.concat(d2.photogrf_dt);
     if ( !utils.isEmpty(d2.photogrf_dt)) reservationArray = reservationArray.concat(d2.photogrf_dt);
@@ -329,8 +311,15 @@ export default function AddComponent({
               <ImgDiv key={d.showroom_no}>
                 <Img imgUrl={d.image_url} />
                 <ImgTitle>{d.showroom_nm}</ImgTitle>
-                <ImgCover>
-                  <img src={d.showroom_status === 'selected' ? ImgAcceptIcon : ImgRejectIcon} alt="checked" />
+                <ImgCover>                 
+                    { ( data.req_status_cd === 'RS0004' || data.req_status_cd === 'RS0010' ) ?
+                    <img src={ImgRejectIcon } alt="checked" />
+                    :
+                    ( data.req_status_cd === 'RS0003' || data.req_status_cd === 'RS0006' ) ?
+                    <img src={ImgAcceptIcon } alt="checked" />
+                    :
+                    null
+                    }
                 </ImgCover>
                 { 
                   d.showroom_status !== 'selected' &&
@@ -406,7 +395,9 @@ export default function AddComponent({
                 <SampleDatePicker
                   shooting_yn={true}
                   dt={shootingDt}
+                  end_dt={shootingEndDt}
                   setDt={setShootingDt}
+                  setEndDt={setShootingEndDt}
                   unavailDt={unavailDt}
                   initDt={today}
                   setInitDt={setToday}
@@ -415,7 +406,7 @@ export default function AddComponent({
                   handleShootingDtClick={handleShootingDtClick}
                 />
                 :
-                <DataTitle>{dayjs(shootingDt).format("YYYY-MM-DD")}</DataTitle>
+                <DataTitle>{dayjs(shootingDt).format("YYYY-MM-DD")}~{dayjs(shootingEndDt).format("YYYY-MM-DD")}</DataTitle>
                 }
               </InputWrap>
               <InputWrap margin="10px">
@@ -646,93 +637,67 @@ export default function AddComponent({
             <Rows>
               <InputWrap margin="20px" width="100%">
                 <InputTitle>유가 여부<Require>*</Require></InputTitle>
-                <ModelWrap>
-                  <CheckBoxWrap2
-                    onClick={() => setInputs({ ...inputs, picalbm_chk: "none",none_paid_pictorial_content : "none" })}
-                  >
-                    <CheckBoxWrapDetail>
-                      <CheckBoxImg
-                        src={
-                          inputs.picalbm_chk === "none"
-                            ? CheckBoxOn
-                            : CheckBoxOff
-                        }
-                        alt=""
+                {(isCanEditable && isStatusCD === canEditableStatus ) ? 
+                <>
+                  <ModelWrap>
+                    <CheckBoxWrap2 onClick={() => setInputs({ ...inputs, picalbm_chk: "none",none_paid_pictorial_content : "none" })}>
+                      <CheckBoxWrapDetail>
+                        <CheckBoxImg src={ inputs.picalbm_chk === "none" ? CheckBoxOn : CheckBoxOff} alt=""/>유가 없음
+                      </CheckBoxWrapDetail>
+                    </CheckBoxWrap2>
+                  </ModelWrap>
+                  <ModelWrap>
+                    <CheckBoxWrap2 onClick={() => setInputs({ ...inputs, picalbm_chk: "own" })}>
+                      <CheckBoxWrapDetail>
+                        <CheckBoxImg src={inputs.picalbm_chk === "own"? CheckBoxOn: CheckBoxOff } alt=""/>자사유가
+                      </CheckBoxWrapDetail>
+                    </CheckBoxWrap2>
+                    <div>
+                      <StyleTextField4
+                        variant="outlined"
+                        value={inputs.own_paid_pictorial_content}
+                        name="own_paid_pictorial_content"
+                        placeholder="브랜드명을 입력해주세요."
+                        onChange={handleClick}
+                        readOnly={inputs.picalbm_chk !== "own" ? true : false}
+                        disabled={inputs.picalbm_chk !== "own" ? true : false}
                       />
-                      유가 없음
-                    </CheckBoxWrapDetail>
-                  </CheckBoxWrap2>
-                 
-                </ModelWrap>
-                <ModelWrap>
-                  <CheckBoxWrap2
-                    onClick={() => setInputs({ ...inputs, picalbm_chk: "own" })}
-                  >
-                    <CheckBoxWrapDetail>
-                      <CheckBoxImg
-                        src={
-                          inputs.picalbm_chk === "own"
-                            ? CheckBoxOn
-                            : CheckBoxOff
-                        }
-                        alt=""
+                    </div>
+                  </ModelWrap>
+                  <ModelWrap>
+                    <CheckBoxWrap2  onClick={() => setInputs({ ...inputs, picalbm_chk: "other" })} >
+                      <CheckBoxWrapDetail>
+                        <CheckBoxImg src={inputs.picalbm_chk === "other" ? CheckBoxOn : CheckBoxOff } alt=""/> 타사유가
+                      </CheckBoxWrapDetail>
+                    </CheckBoxWrap2>
+                    <div>
+                      <StyleTextField4
+                        variant="outlined"
+                        value={inputs.other_paid_pictorial_content}
+                        name="other_paid_pictorial_content"
+                        placeholder="브랜드명을 입력해주세요."
+                        onChange={handleClick}
+                        readOnly={inputs.picalbm_chk !== "other" ? true : false}
+                        disabled={inputs.picalbm_chk !== "other" ? true : false}
                       />
-                      자사유가
-                    </CheckBoxWrapDetail>
-                  </CheckBoxWrap2>
-                  <div>
-                    <StyleTextField4
-                      variant="outlined"
-                      value={inputs.own_paid_pictorial_content}
-                      name="own_paid_pictorial_content"
-                      placeholder="브랜드명을 입력해주세요."
-                      onChange={handleClick}
-                      readOnly={inputs.picalbm_chk !== "own" ? true : false}
-                      disabled={inputs.picalbm_chk !== "own" ? true : false}
-                    />
-                  </div>
-                </ModelWrap>
-                <ModelWrap>
-                  <CheckBoxWrap2
-                    onClick={() =>
-                      setInputs({ ...inputs, picalbm_chk: "other" })
-                    }
-                  >
-                    <CheckBoxWrapDetail>
-                      <CheckBoxImg
-                        src={
-                          inputs.picalbm_chk === "other"
-                            ? CheckBoxOn
-                            : CheckBoxOff
-                        }
-                        alt=""
-                      />
-                      타사유가
-                    </CheckBoxWrapDetail>
-                  </CheckBoxWrap2>
-                  <div>
-                    <StyleTextField4
-                      variant="outlined"
-                      value={inputs.other_paid_pictorial_content}
-                      name="other_paid_pictorial_content"
-                      placeholder="브랜드명을 입력해주세요."
-                      onChange={handleClick}
-                      readOnly={inputs.picalbm_chk !== "other" ? true : false}
-                      disabled={inputs.picalbm_chk !== "other" ? true : false}
-                    />
-                  </div>
-                </ModelWrap>
+                    </div>
+                  </ModelWrap>
+                </>
+                :
+                <CheckBoxWrap2>
+                  <CheckBoxWrapDetail>
+                    {inputs.picalbm_chk === "own" ? "자사유가" : inputs.picalbm_chk === "other"  ? "타사유가" : "유가 없음"}
+                  </CheckBoxWrapDetail>
+                </CheckBoxWrap2>
+                  
+                }
               </InputWrap>
             </Rows>
             <Rows>
               <InputWrap margin="20px" width="100%">
                 <InputTitle>로케촬영</InputTitle>
                 <ModelWrap>
-                  <CheckBoxWrap2
-                    onClick={() =>
-                      setInputs({ ...inputs, loc_yn: !inputs.loc_yn })
-                    }
-                  >
+                  <CheckBoxWrap2 onClick={() => setInputs({ ...inputs, loc_yn: !inputs.loc_yn }) } >
                     <CheckBoxWrapDetail>
                       <CheckBoxImg
                         src={inputs.loc_yn ? CheckBoxOn : CheckBoxOff}

@@ -22,7 +22,7 @@ const ItemCardWrap = styled.div`
   margin-left: 17px;
   margin-bottom: 34px;
   position: relative;
-  
+  overflow: hidden;
   ${(props) =>
     !props.select &&
     css`
@@ -76,7 +76,7 @@ const ItemName = styled.div`
   line-height : 16px;
   font-weight: 500;
   font-size: 16px;
-  margin-top: 10px;
+  margin-top: ${(props) => (props.nameLength > 20 ? "15px" : "20px")};
 `;
 
 const ItemAddName = styled.div`
@@ -170,7 +170,7 @@ const LikeIcon = styled.div`
   position: absolute;
   bottom: 45px;
   right: 20px;
-  bottom: 55px;
+  bottom: 45px;
   cursor: pointer;
 `;
 
@@ -187,7 +187,6 @@ export default function DigitalShowroomItems({
   const [mouseOver, setMouseOver] = useState(false);
   const [editOver, setEditOver] = useState(false);
   const [checkOver, setCheckOver] = useState(false);
-  //console.log('DigitalShowroomItems',data)
   return (
     <>
       {(season.value === data.season || season.value === 0) &&
@@ -203,7 +202,7 @@ export default function DigitalShowroomItems({
               <ImgWrap>
                 <Img imgUrl={data.image_url} />
               </ImgWrap>
-              <ItemName /* addTopPadding={data.now_req_status_nm} */>
+              <ItemName nameLength={utils.isEmpty(data.showroom_nm) ? 0 : data.showroom_nm.length}>
                 {currentBrandId == 'all' && "(" + data.brand_nm + ") "}
                 {data.showroom_nm}
               </ItemName>    
@@ -214,11 +213,11 @@ export default function DigitalShowroomItems({
                 </ItemAddName>    
               } */}
               <IconOuterWrap>
-                {data.is_hot && (
+                {/* {data.is_hot && (
                   <IconWrap>
                     <img src={BestIcon} alt="best" style={{width:'35px'}} />
                   </IconWrap>
-                )}
+                )} */}
                 {data.is_new && (
                   <IconWrap>
                     <img src={NewIcon} alt="new" style={{width:'35px'}} />
@@ -244,13 +243,13 @@ export default function DigitalShowroomItems({
               <ImgWrap>
                 <Img imgUrl={data.image_url} />
               </ImgWrap>
-              <ItemName>{data.showroom_nm}</ItemName>
+              <ItemName nameLength={utils.isEmpty(data.showroom_nm) ? 0 : data.showroom_nm.length}>{data.showroom_nm}</ItemName>              
               <IconOuterWrap>
-                {data.is_hot && (
+                {/* {data.is_hot && (
                   <IconWrap>
                     <img src={BestIcon} alt="best" style={{width:'35px'}} />
                   </IconWrap>
-                )}
+                )} */}
                 {data.is_new && (
                   <IconWrap>
                     <img src={NewIcon} alt="new" style={{width:'35px'}} />

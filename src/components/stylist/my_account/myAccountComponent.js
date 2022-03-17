@@ -20,7 +20,6 @@ import utils from "utils";
 
 
 export default function MyAccountComponent({ data, position }) {
-  console.log('data',data)
   const [inputs, setInputs] = useState({
     name: data.style_list_user_nm || "",
     company: data.company_nm || "",
@@ -117,7 +116,6 @@ export default function MyAccountComponent({ data, position }) {
       },
       (error) => {
         // 실패처리
-        console.log("error : ", error);
         if (error.code === "NotAuthorizedException") {
           alert("기존 비밀번호가 일치하지 않습니다.");
         } else {

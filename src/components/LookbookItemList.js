@@ -3,6 +3,8 @@ import styled, { css } from "styled-components";
 import BestIcon from "../assets/best_icon.png";
 import NewIcon from "../assets/new_icon.png";
 import MainIcon from "assets/main_icon.png";
+import utils from "utils";
+
 const Container = styled.div`
   position: relative;
 `;
@@ -60,9 +62,35 @@ const ItemName = styled.div`
   text-align: center;
   font-weight: 500;
   font-size: 16px;
-  margin-top: 19px;
+  line-height:16px;
+  margin-top: ${(props) => (props.nameLength > 20 ? "5px" : "20px")};
+  overflow: hidden;
 `;
 
+const CategoryNameOuter = styled.div`
+  width: 210px;
+  text-align: center;  
+  font-weight: 500;
+  font-size: 12px;
+  line-height:13px;
+  margin-top: 5px;
+`;
+const CategoryName = styled.div`
+  width: 100%;
+  display:flex;
+  text-align: center;
+  justify-content: center;
+  
+`;
+const Category2 = styled.div`
+  font-weight: 300;
+  font-size: 12px;  
+`;
+const Category3 = styled.div`
+  font-weight: 300;
+  font-size: 12px;  
+  margin-left:5px;
+`;
 const EditDiv = styled.div`
   width: 210px;
   height: 315px;
@@ -114,11 +142,11 @@ const SubHead = styled.div`
 
 const Category = styled.div`
   font-weight: 300;
-
   & + & {
     margin-top: 10px;
   }
 `;
+
 
 const HoverWrap = styled.div`
   cursor: pointer;
@@ -138,22 +166,35 @@ export default function LookbookItemList({ data, handleClick }) {
           <ImgWrap>
             <Img imgUrl={data.image_url} />
           </ImgWrap>
-          <ItemName>{data.showroom_nm}</ItemName>
+          <ItemName nameLength={utils.isEmpty(data.showroom_nm) ? 0 : data.showroom_nm.length}>{data.showroom_nm}</ItemName>
+          <CategoryNameOuter>
+            <CategoryName>
+            {/* {data.category_list !== null && data.category_list.map((d,idx) => <Category2 key={idx}>{idx>0 && " , "}{d}</Category2>)} */}
+            {data.new_category_list !== null &&
+                data.new_category_list.map((d,idx) => <Category2 key={d}>{idx>0 && ","} {d.category_nm}{!d.is_input && '(미입고)'}</Category2>)
+              }
+            {data.all_in_yn && <Category3>All IN</Category3>}
+            </CategoryName>
+          </CategoryNameOuter>
           <HoverWrap>
             <EditDiv visible={mouseOver} />
             <HeadTxt visible={mouseOver}>
               <Head>{data.showroom_nm}</Head>
               {data.all_in_yn && <SubHead>ALL IN</SubHead>}
-              {data.category_list !== null &&
-                data.category_list.map((d) => <Category key={d}>{d}</Category>)}
+             {/*  {data.category_list !== null &&
+                data.category_list.map((d) => <Category key={d}>{d}</Category>)
+              } */}
+              {data.new_category_list !== null &&
+                data.new_category_list.map((d) => <Category key={d}>{d.category_nm}{!d.is_input && '(미입고)'}</Category>)
+              }
             </HeadTxt>
           </HoverWrap>
           <IconOuterWrap>
-            {data.is_hot && (
+            {/* {data.is_hot && (
               <IconWrap>
                 <img src={BestIcon} alt="best"  style={{width:'35px'}}/>
               </IconWrap>
-            )}
+            )} */}
             {data.is_new && (
               <IconWrap>
                 <img src={NewIcon} alt="new" style={{width:'35px'}} />

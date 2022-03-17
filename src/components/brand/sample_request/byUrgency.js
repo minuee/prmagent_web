@@ -1,28 +1,26 @@
-import React, { useRef } from "react";
+import React, { useRef,useState } from "react";
 import styled, { css } from "styled-components";
+import { darken } from "polished";
 import { useInfiniteQuery } from "react-query";
 import { CircularProgress } from "@material-ui/core";
 
 import SampleRequestItems from "components/SampleRequestItems";
-import SampleRequestItemsSmall from "components/SampleRequestItemsSmall";
 import { apiObject } from "api/api_brand";
 import Progress from "components/common/progress";
+import MemoIconBlack from "assets/scheduler/memoIcon.svg";
+import ShowroomMemo from "components/brand/scheduler/ShowroomMemo";
 
 /* 서랍장 상태 관리 */
 import { useRecoilState } from "recoil";
 import { currentDrawer } from "redux/state";
 
 const ItemWrap = styled.div`
-  width: ${(props) => (props.active ? "360px" : "315px")};    
+  width: 360px;
   border-radius: 10px;
   background-color: #f1f2ea;
   padding: 20px 14px;
-
   margin-bottom: 20px;
-
-  & + & {
-    margin-left: 20px;
-  }
+  margin-left: 20px;
 `;
 
 const ImgDiv = styled.div`
@@ -50,9 +48,26 @@ const Img = styled.div`
 const ItemTitle = styled.div`
   display: flex;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
-  margin-top: 19px;
+  margin-top: 17px;
+  .memo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+ 
+    &:hover {
+      background-color: ${darken(0.2, "#ffffff")};
+    }
+    &:active {
+      background-color: ${darken(0.3, "#ffffff")};
+    }
+    > img {
+    }
+  }
 `;
 
 const RequestWrap = styled.div`
@@ -82,6 +97,9 @@ const ButtonDiv = styled.div`
 `;
 
 export default function ByUrgency({ dt, modelType }) {
+  const [open, setOpen] = useState(false);
+  const [sno, setNowno] = useState(null);
+  const [snm, setNowsnm] = useState(null);
   const urgencyData = ({ pageParam = 1 }) =>
     apiObject.getUrgency({
       page: pageParam,
@@ -106,7 +124,14 @@ export default function ByUrgency({ dt, modelType }) {
   if (status === "loading") {
     return <Progress type="load" />;
   }
-  
+
+  const openShowroomMemo = async(no,nm) => {
+    await setNowno(no);
+    await setNowsnm(nm)
+    if ( sno != null) {
+      setOpen(!open)
+    }
+  }
   return (
     <>
       {data.pages[0].total_count === 0 ? (
@@ -115,11 +140,16 @@ export default function ByUrgency({ dt, modelType }) {
         data.pages.map((group) =>
           group.request_list.map((d, i) => (
             <>
-              <ItemWrap key={d.showroom_no} active={isdrawer}>
+              <ItemWrap key={i} active={isdrawer}>
                 <ImgDiv>
                   <Img imgUrl={d.image_url} />
                 </ImgDiv>
-                <ItemTitle>{d.showroom_nm}</ItemTitle>
+                <ItemTitle>
+                  {d.showroom_nm}
+                  <div className="memo" onClick={() => openShowroomMemo(d.showroom_no,d.showroom_nm)}>
+                    <img src={MemoIconBlack} alt="memo" />
+                  </div>
+                </ItemTitle>
                 <RequestWrap>
                   {d.user_info.map((v) => (
                     <SampleRequestItems
@@ -148,6 +178,13 @@ export default function ByUrgency({ dt, modelType }) {
           )}
         </div>
       </ButtonDiv>
+      <ShowroomMemo
+        open={open}
+        setOpen={setOpen}
+        sno={sno}
+        snm={snm}
+        dt={dt}
+      />
     </>
   );
 }

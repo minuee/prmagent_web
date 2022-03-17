@@ -1,19 +1,58 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import dayjs from "dayjs";
 import utils from "utils";
 import { useDispatch, useSelector } from "react-redux";
 import { darken } from "polished";
 import CHECKON from 'assets/circle_check_on.png';
+/* 서랍장 상태 관리 */
+import { useRecoilState } from "recoil";
+import { currentDrawer } from "redux/state";
 
 export default function Print({ data, footer ,view,handleEachSendOut=null,handleEachReturns=null}) {
   const reducer = useSelector((state) => state.reducer);
-  console.log('reducerreducerreducer',reducer.myUser.username);
-  console.log('datadatadata',data);
+  const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer);
+  const [newSendOutDate, setChangeSendoutDate] = useState(null);
+  const [newReturnDate, setChangeReturnDate] = useState(null);
+
+  useEffect(async() => {
+  
+    if ( !utils.isEmpty(data)) {
+      if ( view === 'return') {
+        const returning_date = dayjs.unix(data.returning_date).format("YYYY-MM-DD");
+        if ( !utils.isEmpty(data.showroom_list) ) {
+          data.showroom_list.forEach((item1,i1) => {
+            if ( !utils.isEmpty(item1.sample_list) ) {
+              item1.sample_list.forEach((item2,i2) => {
+                if ( utils.dateToDate(item2.return_dt) !== returning_date ) {
+                  setChangeReturnDate(utils.dateToDate(item2.return_dt));
+                }
+              })
+            }
+          }
+        )}
+      }else if ( view === 'sendout') {
+        const loaning_date = dayjs.unix(data.loaning_date).format("YYYY-MM-DD");
+        if ( !utils.isEmpty(data.showroom_list) ) {
+          data.showroom_list.forEach((item1,i1) => {
+            if ( !utils.isEmpty(item1.sample_list) ) {
+              item1.sample_list.forEach((item2,i2) => {
+                
+                if ( utils.dateToDate(item2.sendout_dt) !== loaning_date ) {
+                  setChangeSendoutDate(utils.dateToDate(item2.sendout_dt));
+                }
+              })
+            }
+          }
+        )}
+      }
+    }
+  }, [data]);
+
   if ( utils.isEmpty(data)) {
     return (
       <Nodata>
-        잘못된 접근입니다.
+        데이터 조회중입니다.
       </Nodata>
     )
   }else{
@@ -22,6 +61,10 @@ export default function Print({ data, footer ,view,handleEachSendOut=null,handle
       <Container>
         <Title>{data.brand_nm}</Title>
         <Header>
+          {/* <HeaderRow>
+            <HeaderTitle>Sheet No</HeaderTitle>
+            <HeaderContent>{data.req_no}</HeaderContent>
+          </HeaderRow> */}
           <HeaderRow>
             <HeaderTitle>Magazine</HeaderTitle>
             <HeaderContent>{data.mgzn_nm}</HeaderContent>
@@ -48,18 +91,25 @@ export default function Print({ data, footer ,view,handleEachSendOut=null,handle
             <HeaderTitle>픽업일</HeaderTitle>
             <HeaderContent>
               {dayjs.unix(data.loaning_date).format("MM월 DD일")}
+              {(!utils.isEmpty(newSendOutDate) && newSendOutDate != dayjs.unix(data.loaning_date).format("YYYY-MM-DD") )&& (
+              <FontRedPadding>(일부 픽업일 변경 : {utils.dateToDateMMDD(newSendOutDate)})</FontRedPadding>
+            )}
             </HeaderContent>
           </HeaderRow>
           <HeaderRow>
             <HeaderTitle>촬영일</HeaderTitle>
             <HeaderContent>
               {dayjs.unix(data.shooting_date).format("MM월 DD일")}
+              {data.shooting_date != data.shooting_end_date && "~"+dayjs.unix(data.shooting_end_date).format("MM월 DD일")}
             </HeaderContent>
           </HeaderRow>
           <HeaderRow>
             <HeaderTitle>반납일</HeaderTitle>
             <HeaderContent>
               {dayjs.unix(data.returning_date).format("MM월 DD일")}
+              {!utils.isEmpty(newReturnDate) && (
+              <FontRedPadding>(일부 반납(전달)일 변경 : {utils.dateToDateMMDD(newReturnDate)})</FontRedPadding>
+            )}
               {/* <HeaderContentDetailTitle>
                 {dayjs.unix(data.returning_date).format("MM월 DD일")}
               </HeaderContentDetailTitle>
@@ -96,49 +146,40 @@ export default function Print({ data, footer ,view,handleEachSendOut=null,handle
                     <React.Fragment key={v.sample_no}>
                       <TBodyTr>
                         {i === 0 && (
-                          <TbodyTd
-                            rowSpan={
-                              d.sample_list.length > 1
-                                ? d.sample_list.length * 2
-                                : 3
-                            }
-                          >
+                          <TbodyTd rowSpan={d.sample_list.length > 1 ? d.sample_list.length * 3: 3}>
                             {d.showroom_nm}
                           </TbodyTd>
                         )}
                         <TbodyTd>{v.category}</TbodyTd>
                         {i === 0 && (
-                          <TbodyTd
-                            rowSpan={
-                              d.sample_list.length > 1
-                                ? d.sample_list.length * 2
-                                : 3
-                            }
-                            imgUrl={v.image_list[0]}
-                          ></TbodyTd>
+                          <TbodyTd rowSpan={d.sample_list.length > 1? d.sample_list.length * 3: 3} imgUrl={v.image_list[0]}></TbodyTd>
                         )}                        
                           { view === 'sendout' ?
                           <TbodyTd bg="#d78979">
                             {utils.isEmpty(v.send_user_info) ? data.brand_nm : v.send_user_info?.[0].user_nm}
-                            ({utils.isEmpty(v.send_user_info) ? '' : v.send_user_info?.[0].position})
+                            {utils.isEmpty(v.send_user_info) ? '' : v.send_user_info?.[0].position}
+                            ({utils.isEmpty(v.send_user_info) ? data.brand_nm : v.send_user_info?.[0].mgzn_nm})          
                           </TbodyTd>
                           :
                           <TbodyTd bg="#d78979">                          
-                            {data.to_user_nm}
-                            </TbodyTd>
-                          }                    
-                        
+                            {/*  {data.to_user_nm} */}
+                            {utils.isEmpty(v.use_user_info) ? data.to_user_nm : v.use_user_info?.[0].user_nm}
+                            {utils.isEmpty(v.use_user_info) ? '' :v.use_user_info?.[0].position}
+                            {/* ({utils.isEmpty(v.use_user_info) ? data.mgzn_nm : v.use_user_info?.[0].company_nm}) */}
+                          </TbodyTd>
+                          }
                           { 
                           view === 'sendout' ?
                           <TbodyTd bg="#e1c668">                         
                             {utils.isEmpty(v.use_user_info) ? data.to_user_nm : v.use_user_info?.[0].user_nm}
-                            {utils.isEmpty(v.use_user_info) ? '' : "("+v.use_user_info?.[0].position+")"}
+                            {utils.isEmpty(v.use_user_info) ? '' : v.use_user_info?.[0].position}
+                            ({utils.isEmpty(v.use_user_info) ? data.mgzn_nm : v.use_user_info?.[0].company_nm})
                           </TbodyTd>
                           :
                           <TbodyTd bg="#e1c668">
                             {utils.isEmpty(v.return_user_info) ? data.brand_nm : v.return_user_info?.[0].user_nm}
                             {utils.isEmpty(v.return_user_info) ? '' : v.return_user_info?.[0].position}
-                            ({utils.isEmpty(v.return_user_info) ? data.brand_nm : v.return_user_info?.[0].mgzn_nm})
+                            {/* ({utils.isEmpty(v.return_user_info) ? data.brand_nm : v.return_user_info?.[0].mgzn_nm}) */}
                             </TbodyTd>
                           }
                       </TBodyTr>
@@ -161,37 +202,45 @@ export default function Print({ data, footer ,view,handleEachSendOut=null,handle
                           }
                         </TbodyTd>
                       </TBodyTr>
-                      {d.sample_list.length === 1 && (
+                      {d.sample_list.length > 0 && (
                         <TBodyTr>
-                          <TbodyTd></TbodyTd>
-                          <TbodyTd2>
+                          <TbodyTd>
+                            {console.log('v.sedd',v.send_user_info)}
+                          </TbodyTd>
+                          <TbodyTdWrap >
                             {
                               view === 'sendout' && (
                               v.sendout_yn ?
-                              <><img src={CHECKON} alt="date" style={{width:15,height:15}} /></>
-                              :
-                              v.send_user_info[0].sendout_id == reducer.myUser.username ?
-                              <SendBtn onClick={()=>handleEachSendOut(data.req_no, v.sample_no)}>발송하기</SendBtn>
+                              <img src={CHECKON} alt="CHECKON" style={{width:12,height:12,}} />
+                              :    
+                              v.send_user_info[0].sendout_userid_type == 'RUS000' ?                      
+                              <SendBtn active={isdrawer} onClick={()=>handleEachSendOut(data.req_no, v.sample_no)}>발송하기</SendBtn>
                               :
                               null
                               )
                             }
+                            { (  view === 'sendout' && dayjs.unix(data.loaning_date).format("YYYY-MM-DD") !== utils.dateToDate(v.sendout_dt) )&&
+                            <>픽업일 ({utils.dateToDate(v.sendout_dt)})</>
+                            }
+                            { (  view === 'return' && dayjs.unix(data.returning_date).format("YYYY-MM-DD") !== utils.dateToDate(v.return_dt) )&&
+                            <>반납일 ({utils.dateToDate(v.return_dt)})</>
+                            }
                             {
                               (view === 'return' && v.return_yn ) &&
-                              <><img src={CHECKON} alt="date" style={{width:15,height:15}} /></>
+                              <img src={CHECKON} alt="CHECKON" style={{width:12,height:12,}} />
                             }
-                          </TbodyTd2>
-                          <TbodyTd2>
-                            
+                          </TbodyTdWrap>
+                          <TbodyTd2 >
+                            {
+                              ( view === 'sendout' &&  v.pickup_yn ) && 
+                              <img src={CHECKON} alt="date" style={{width:12,height:12,}} />
+                            }
                             {
                               view === 'return' && (
                               v.returncheck_yn ?
-                              <><img src={CHECKON} alt="date" style={{width:15,height:15}} /></>
+                              <img src={CHECKON} alt="date" style={{width:12,height:12,}} />
                               :
-                              v.return_user_info[0].return_id == reducer.myUser.username ?
-                              <SendBtn onClick={()=>handleEachReturns(data.req_no, v.sample_no)}>반납완료처리</SendBtn>
-                              :
-                              null
+                              <SendBtn active={isdrawer} onClick={()=>handleEachReturns(data.req_no, v.sample_no)}>반납완료처리</SendBtn>
                               )   
                             }
                             
@@ -203,14 +252,7 @@ export default function Print({ data, footer ,view,handleEachSendOut=null,handle
                 </React.Fragment>
               ))}
               <tr>
-                <td
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: "12px",
-                    paddingTop: "15px",
-                  }}
-                  colSpan={5}
-                >
+                <td style={{fontWeight: "bold",fontSize: "12px", paddingTop: "15px",}}colSpan={5}>
                   {footer}
                 </td>
               </tr>
@@ -264,7 +306,15 @@ const HeaderTitle = styled.div`
   width: 125px;
   height: 20px;
 `;
-
+const FontRedPadding = styled.div`
+  font-size: 11px;
+  padding-left:10px;
+  color:red;
+`;
+const FontRed = styled.div`
+  font-size: 12px;
+  color:red;
+`;
 const HeaderContent = styled.div`
   width: 100%;
   height: 20px;
@@ -330,7 +380,7 @@ const TbodyTd = styled.td`
     props.imgUrl &&
     css`
       background: url("${(props) => props.imgUrl}") no-repeat center;
-      background-size: cover;
+      background-size: contain;
     `}
 `;
 const TbodyTd2 = styled.td`
@@ -338,9 +388,7 @@ const TbodyTd2 = styled.td`
   word-wrap: break-word;
   font-size: 13px;
   background-color: ;${(props) => props.bg || "#ffffff"};
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  
   ${(props) =>
     props.imgUrl &&
     css`
@@ -350,7 +398,7 @@ const TbodyTd2 = styled.td`
 `;
 
 const SendBtn = styled.div`
-  width: 80px;
+  width: 100%;
   height: 20px;
   cursor: pointer;
   border-radius: 3px;
@@ -362,11 +410,30 @@ const SendBtn = styled.div`
   justify-content: center;
   font-size: 10px;
   font-weight: bold;
-  margin-left:60px;
   &:hover {
     background-color: ${darken(0.1, "#7ea1b2")};
   }
   &:active {
     background-color: ${darken(0.2, "#7ea1b2")};
   }
+`;
+
+const TbodyTdWrap = styled.td`
+  width:100%;
+  height:100%;
+  border: solid 1px #000000;  
+  background-color: ${(props) => props.bg || "#ffffff"};
+  align-items: center;
+  justify-content: center;
+  > img {
+    margin-left:5px;
+    height:100%;
+  }
+
+  ${(props) =>
+    props.imgUrl &&
+    css`
+      background: url("${(props) => props.imgUrl}") no-repeat center;
+      background-size: cover;
+    `}
 `;

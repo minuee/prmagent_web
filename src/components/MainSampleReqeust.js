@@ -22,12 +22,12 @@ SwiperCore.use([Navigation, Scrollbar]);
 
 function MainSampleRequest({ data = null, title, subTitle, type = "brand" }) {
   const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer);
-  //console.log('MainSampleRequest',isdrawer)
   const history = useHistory();
   const handleClick = useCallback(
     (req_no) => {
       if (type === "brand") {
-        history.push("/brand/sample_requests/req");
+        //history.push("/brand/sample_requests/req");
+        history.push("/brand/sample_requests/detail/" + req_no);
       }
       if (type === "magazine") {
         history.push("/magazine/sample_requests/detail/" + req_no);
@@ -85,16 +85,26 @@ function MainSampleRequest({ data = null, title, subTitle, type = "brand" }) {
                       </TxtWrap>
                     </CardComp>
                     <CardComp>
-                      <TxtWrap fontSize="16px">
-                        {d.brand_cnfirm_dt === null
+                      { type === "brand" ?
+                      <TxtWrap fontSize="16px">{/* brand_cnfirm_dt */}
+                        {d.req_dt === null
                           ? "-"
-                          : dayjs.unix(d.brand_cnfirm_dt).format("YYYY-MM-DD")}
+                          : dayjs.unix(d.req_dt).format("YYYY-MM-DD")}
                       </TxtWrap>
+                      :
+                      <TxtWrap fontSize="16px">{/* brand_cnfirm_dt */}
+                        {d.photogrf_dt === null
+                          ? "-"
+                          : dayjs.unix(d.photogrf_dt).format("YYYY-MM-DD")}{d.photogrf_end_dt!=d.photogrf_dt && "~"+dayjs.unix(d.photogrf_end_dt).format("YYYY-MM-DD")}
+                      </TxtWrap>
+                      }
                     </CardComp>
                     <CardComp>
                       <TxtWrap fontSize="12px" color="#999999">
                         {d.company_nm}
                       </TxtWrap>
+                    
+                    {/*   <TxtWrap fontSize="12px" color="#999999">Sheet No:{d.req_no}</TxtWrap> */}
                     </CardComp>
                   </CardWrap>
                 </SwiperSlide>

@@ -17,7 +17,7 @@ import { useRecoilState } from "recoil";
 import { currentDrawer,currentShowRoomSelect } from "redux/state";
 import utils from "utils";
 
-function DigitalShowroomItems({select,selectData,filterData,handleSelectData,handleCreateLookbook,handleCopyData}) {
+function DigitalShowroomItems({select,selectData,filterData,handleSelectData,handleCreateLookbook,handleCopyData=null}) {
   const history = useHistory();
   const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer);
   const [season, setSeason] = useRecoilState(currentShowRoomSelect);
@@ -129,7 +129,9 @@ function DigitalShowroomItems({select,selectData,filterData,handleSelectData,han
   if (status === "loading") {
     return <Progress type="load" />;
   }else{
-    handleCopyData(season,seasonData)
+    if ( handleCopyData != null ) {
+      handleCopyData(season,seasonData)
+    }
   }
 
   

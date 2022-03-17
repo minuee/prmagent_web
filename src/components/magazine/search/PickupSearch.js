@@ -11,6 +11,7 @@ import Progress from "components/common/progress";
 /* 서랍장 상태 관리 */
 import { useRecoilState } from "recoil";
 import { currentDrawer } from "redux/state";
+import utils from "utils";
 
 export default function PickupSearch({ searchText, total, setTotal }) {
   const history = useHistory();
@@ -66,6 +67,9 @@ export default function PickupSearch({ searchText, total, setTotal }) {
                         <Img imgUrl={d.img_url_adres} />
                         <TextWrap active={isdrawer}>
                           <div className="title">{d.contact_user_nm}</div>
+                          <div className="subTitle">                            
+                            {utils.phoneFormat(d.contact_user_phone)}
+                          </div>
                           <div className="season">
                             {dayjs.unix(d.recpt_dt).format("YYYY-MM-DD")}
                             <span style={{ margin: "0 10px" }}>|</span>
@@ -189,6 +193,22 @@ const TextWrap = styled.div`
     @media (min-width: 10px) and (max-width: 1439px) {      
       width: ${(props) => (props.active ? "300px" : "430px")};
     }
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .subTitle {
+    font-size: 14px;
+    font-weight: 500;
+    @media (min-width: 1920px) {      
+      min-width: 540px;
+    }
+    @media (min-width: 1440px) and (max-width: 1919px) {      
+      width: ${(props) => (props.active ? "480px" : "310px")};
+    }
+    @media (min-width: 10px) and (max-width: 1439px) {      
+      width: ${(props) => (props.active ? "300px" : "430px")};
+    } 
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;

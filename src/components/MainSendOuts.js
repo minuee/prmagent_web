@@ -1,7 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useCallback,useState,useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import dayjs from "dayjs";
+import 'moment/locale/ko';
+import moment from "moment";
 import isImageUrl from "is-image-url";
 
 import SendOutsIcon from "assets/send_outs.png";
@@ -25,13 +27,35 @@ function MainSendOut({ data = null, title, subTitle, type = "brand" }) {
   const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer);
   const history = useHistory();
   const handleClick = useCallback(
-    (each_data) => {
+    (each_data,sdata) => {
+      const now = new Date();
+      const dayjsDate2 = new Date(now.setDate(now.getDate()+1)).getTime();//dayjs().subtract(10, 'day');    
+      const sdate = moment().unix();
       if (type === "brand") {
         history.push("/brand/send_outs/req/" + each_data.req_no + "/sendout");
       }
       if (type === "magazine") {
         //history.push("/magazine/pickup/req/" + req_no + "/pickups");
-        history.push("/magazine/pickup/req/" + each_data.req_no + "/sendout/" + each_data.showroom_no);
+        console.log('sdatasdata',sdata,each_data.req_no)
+        if ( sdata.length > 0) {
+          let viewType = "sendout";
+          let reqNoData = [];
+          let newSdata = sdata.filter((item) => item.req_no == each_data.req_no).map( item => {
+            return item.showroom_no
+          });
+          console.log('newSdata',newSdata)
+          history.push({
+            //pathname: "/magazine/send_outs/" + sdate + "/" + viewType,
+            pathname: "/magazine/pickup_single/" + sdate + "/" + viewType,
+            state: {
+              newArr : sdate,
+              viewType : viewType,
+              screenState : [{date: sdate, showroom_list : newSdata, req_no_list : [each_data.req_no]}]
+            }
+          });
+        }else{
+          history.push("/magazine/pickup/req/" + each_data.req_no + "/sendout/" + each_data.showroom_no);
+        }
       }
       if (type === "stylist") {
         history.push("/stylist/pickup/req/" + each_data.req_no + "/sendout/" + each_data.showroom_no);        
@@ -40,7 +64,29 @@ function MainSendOut({ data = null, title, subTitle, type = "brand" }) {
     [type]
   );
 
-  const targetData = utils.isEmpty(data[0]) ? [] : data[0].each_list;
+  const [leftData, setLeftData] = useState([]);
+  const [leftShowroomData, setLeftShowroomData] = useState([]);
+  useEffect(async() => {
+    const targetData = utils.isEmpty(data[0]?.each_list) ?[] : data[0].each_list;
+    let newLeftIdxArray = [];
+    let newLeftShowroomIdxArray = [];
+    let newLeftArray = [];    
+    await targetData.forEach((element) => {
+      let req_no = element.showroom_list[0].req_no;
+      if ( !newLeftIdxArray.includes(req_no)) {
+        newLeftIdxArray.push(req_no);
+        newLeftArray.push(element)
+      }
+      if ( !newLeftShowroomIdxArray.includes(req_no)) {
+        newLeftShowroomIdxArray.push({req_no :req_no, showroom_no: element.showroom_list[0].showroom_no});
+      }
+    })          
+
+    setLeftData(newLeftArray);
+    setLeftShowroomData(newLeftShowroomIdxArray);
+  }, []);
+
+  //const targetData = utils.isEmpty(data[0]) ? [] : data[0].each_list;
   return (
     <>
       {data !== null && (
@@ -64,44 +110,46 @@ function MainSendOut({ data = null, title, subTitle, type = "brand" }) {
                 textAlign="center"
                 fontWeight="900"
               >
-                {targetData.length}
+                {leftData.length}
               </TxtWrap>
             </RequestCntWrap>
             <StyledSwiper 
               isdrawer={isdrawer}  
               spaceBetween={10} 
-              slidesPerView={targetData.length < 4 ? 1 : 4} 
+              slidesPerView={leftData.length < 3 ? 1 : 2} 
               navigation
             >
-              {targetData.map((item, i) => {
+              {leftData.map((item, i) => {
                 const subItem = item.showroom_list[0];
-                console.log('subItem',i,subItem);
                 return (
                 <SwiperSlide key={i}>
-                  <CardWrap onClick={() => handleClick(subItem)}>
+                  <CardWrap onClick={() => handleClick(subItem,leftShowroomData)}>
                     <CardImgCopm>
                       {
                         subItem.target_id_type === 'RUS000' ?
                         <img src={isImageUrl(subItem.brand_logo_adres) ? subItem.brand_logo_adres : NoimgLogo} alt="logo"/>
                         :
-                        <img src={isImageUrl(subItem.mgzn_logo_adres) ? subItem.mgzn_logo_adres : NoimgLogo} alt="logo"/>                        
+                        subItem.target_id_type === 'RUS001' ?
+                        <img src={isImageUrl(subItem.mgzn_logo_adres) ? subItem.mgzn_logo_adres2 : NoimgLogo} alt="logo"/>
+                        :
+                        <img src={isImageUrl(subItem.mgzn_logo_adres) ? subItem.mgzn_logo_adres : NoimgLogo} alt="logo"/>
                       }                      
                     </CardImgCopm>
                     <CardComp>
-                      <TxtWrap fontSize="18px" color="#999999">
-                        {subItem.req_user_nm} →
+                      <TxtWrap fontSize="15px" color="#999999">
+                        {subItem.req_user_nm}{utils.isEmpty(subItem.req_user_position) ? ""  : subItem.req_user_position} →
                       </TxtWrap>
                     </CardComp>
                     <CardComp>
-                      <TxtWrap fontSize="15px" fontWeight="bold">
-                      {subItem.target_user_nm} ({utils.isEmpty(subItem.target_user_position) ? subItem.brand_nm  : subItem.target_user_position})
+                      <TxtWrap fontSize="18px" fontWeight="bold">
+                      {subItem.target_user_nm}{utils.isEmpty(subItem.target_user_position) ? "" : subItem.target_user_position}
                       </TxtWrap>
                     </CardComp>
-                    <CardComp>
+                    {/* <CardComp>
                       <TxtWrap fontSize="13px">
-                        {dayjs.unix(data[0].date).format("YYYY-MM-DD")}
+                        {dayjs.unix(data[0].date).format("YYYY-MM-DD")} <TxtWrap fontSize="11px" color="#999999">ReqNo:{subItem.req_no}</TxtWrap>
                       </TxtWrap>
-                    </CardComp>
+                    </CardComp> */}
                     
                   </CardWrap>
                 </SwiperSlide>

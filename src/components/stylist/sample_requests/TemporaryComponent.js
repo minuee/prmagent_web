@@ -727,7 +727,6 @@ export default function TemporaryComponent({
       }
       setPickupDt(pDt);
       setReturningDt(rDt);
-      // console.log("pdt : ", pDt, ", rdt : ", rDt);
     }
   };
 
@@ -804,8 +803,6 @@ export default function TemporaryComponent({
       loc_yn: inputs.loc_yn,
       loc_value: inputs.loc_value,
     };
-
-    // console.log("REQUEST BODY : ", requestBody);
     handleTemporarySave(requestBody);
   };
 

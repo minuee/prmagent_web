@@ -7,7 +7,7 @@ import { darken } from "polished";
 import CHECKON from 'assets/circle_check_on.png';
 
 export default function Print({ data, footer ,view,handleEachPickup=null,handleEachReturn=null}) {
-  //console.log('PrintPrintPrint',data,view)
+
   const reducer = useSelector((state) => state.reducer);
   const [newSendOutDate, setChangeSendoutDate] = useState(null);
   const [newReturnDate, setChangeReturnDate] = useState(null);
@@ -46,7 +46,7 @@ export default function Print({ data, footer ,view,handleEachPickup=null,handleE
   if ( utils.isEmpty(data)) {
     return (
       <Nodata>
-        no data
+        데이터 조회중입니다.
       </Nodata>
     )
   }else{
@@ -55,6 +55,10 @@ export default function Print({ data, footer ,view,handleEachPickup=null,handleE
     <Container>
       <Title>{data.brand_nm}</Title>
       <Header>
+        {/* <HeaderRow>
+          <HeaderTitle>Sheet No</HeaderTitle>
+          <HeaderContent>{data.req_no}</HeaderContent>
+        </HeaderRow> */}
         <HeaderRow>
           <HeaderTitle>Magazine</HeaderTitle>
           <HeaderContent>{data.mgzn_nm}</HeaderContent>
@@ -91,6 +95,7 @@ export default function Print({ data, footer ,view,handleEachPickup=null,handleE
           <HeaderTitle>촬영일</HeaderTitle>
           <HeaderContent>
             {dayjs.unix(data.shooting_date).format("MM월 DD일")}
+            {data.shooting_date != data.shooting_end_date && "~"+dayjs.unix(data.shooting_end_date).format("MM월 DD일")}
           </HeaderContent>
         </HeaderRow>
         <HeaderRow>
@@ -136,24 +141,14 @@ export default function Print({ data, footer ,view,handleEachPickup=null,handleE
                   <React.Fragment key={v.sample_no}>
                     <TBodyTr>
                       {i === 0 && (
-                        <TbodyTd
-                          rowSpan={
-                            d.sample_list.length > 1
-                              ? d.sample_list.length * 2
-                              : 3
-                          }
-                        >
+                        <TbodyTd rowSpan={d.sample_list.length > 1? d.sample_list.length * 3: 3}>
                           {d.showroom_nm}
                         </TbodyTd>
                       )}
                       <TbodyTd>{v.category}</TbodyTd>
                       {i === 0 && (
                         <TbodyTd
-                          rowSpan={
-                            d.sample_list.length > 1
-                              ? d.sample_list.length * 2
-                              : 3
-                          }
+                          rowSpan={d.sample_list.length > 1 ? d.sample_list.length * 3 : 3}
                           imgUrl={v.image_list[0]}
                         ></TbodyTd>
                       )}
@@ -161,8 +156,8 @@ export default function Print({ data, footer ,view,handleEachPickup=null,handleE
                         { view === 'pickups' ?
                         <TbodyTdWrap bg="#d78979">
                           {utils.isEmpty(v.send_user_info) ? data.brand_nm : v.send_user_info?.[0].user_nm}
-                          {utils.isEmpty(v.send_user_info) ? '' : v.send_user_info?.[0].position}
-                          ({utils.isEmpty(v.send_user_info) ? data.brand_nm : v.send_user_info?.[0].mgzn_nm})
+                          {utils.isEmpty(v.send_user_info) ? '' : v.send_user_info?.[0].position}         
+                          {/* ({utils.isEmpty(v.use_user_info) ? data.brand_nm : v.use_user_info?.[0].company_nm}) */}
                           {/* { (view === 'pickups' && v.pickup_yn ) &&
                             <img src={CHECKON} alt="date" style={{width:9,height:10,marginTop:2}} />
                           } */}
@@ -173,35 +168,31 @@ export default function Print({ data, footer ,view,handleEachPickup=null,handleE
                         </TbodyTdWrap>
                         :
                         <TbodyTdWrap bg="#d78979">                          
-                          {data.to_user_nm}
+                          {utils.isEmpty(v.use_user_info) ? data.brand_nm : v.use_user_info?.[0].user_nm}
+                          {utils.isEmpty(v.use_user_info) ? '' : v.use_user_info?.[0].position}      
+                          {/* ({utils.isEmpty(v.use_user_info) ? data.brand_nm : v.use_user_info?.[0].company_nm})    */}                           
                           { dayjs.unix(data.returning_date).format("YYYY-MM-DD") !== utils.dateToDate(v.return_dt) &&
-                          <><br />전달일 ({utils.dateToDate(v.return_dt)})</>
+                          <><br />발송일 ({utils.dateToDate(v.return_dt)})</>
                           }                          
-                          {
+                         {/*  {
                             (view === 'sendout' && v.return_yn ) &&
                             <>  <img src={CHECKON} alt="date" style={{width:9,height:10,marginTop:2}} /></>
-                          }
+                          } */}
                           </TbodyTdWrap>
                         }                    
                       
                         { 
                          view === 'pickups' ?
                          <TbodyTd bg="#e1c668">
-                          {data.to_user_nm}
-                          {
-                              (view === 'pickups' && v.pickup_yn ) &&
-                              <>  <img src={CHECKON} alt="date" style={{width:9,height:10,marginTop:2}} /></>
-                            }
+                          {utils.isEmpty(v.use_user_info) ? data.brand_nm : v.use_user_info?.[0].user_nm}
+                          {utils.isEmpty(v.use_user_info) ? '' : v.use_user_info?.[0].position}
+                          {/* ({utils.isEmpty(v.return_user_info) ? data.brand_nm : v.return_user_info?.[0].mgzn_nm}) */}
                          </TbodyTd>
                          :
                          <TbodyTd bg="#e1c668">
                           {utils.isEmpty(v.return_user_info) ? data.brand_nm : v.return_user_info?.[0].user_nm}
                           {utils.isEmpty(v.return_user_info) ? '' : v.return_user_info?.[0].position}
-                          ({utils.isEmpty(v.return_user_info) ? data.brand_nm : v.return_user_info?.[0].mgzn_nm})
-                          {
-                            (view === 'sendout' && v.returncheck_yn ) &&
-                            <>  <img src={CHECKON} alt="date" style={{width:9,height:10,marginTop:2}} /></>
-                          }
+                          {/* ({utils.isEmpty(v.return_user_info) ? data.brand_nm : v.return_user_info?.[0].mgzn_nm}) */}
                           
                           </TbodyTd>
                         }
@@ -221,29 +212,39 @@ export default function Print({ data, footer ,view,handleEachPickup=null,handleE
                         {utils.isEmpty(v.return_user_info) ? utils.phoneFormat(data.to_user_phone) : utils.phoneFormat(v.return_user_info?.[0].phone_no)}                        
                       </TbodyTd>
                     </TBodyTr>
-                    {d.sample_list.length === 1 && (
+                    {d.sample_list.length > 0 && (
                       <TBodyTr>
                         <TbodyTd></TbodyTd>
                         <TbodyTd2>
-                          
-                          { (view === 'sendout' && !v.sendout_yn  && dayjs.unix(data.returning_date).format("YYYY-MM-DD") !== utils.dateToDate(v.return_dt) ) &&
-                          <FontRed>전달일자를 꼭 확인하세요</FontRed>
-                          }
+
                           { (view === 'pickups' && !v.pickup_yn && dayjs.unix(data.loaning_date).format("YYYY-MM-DD") !== utils.dateToDate(v.sendout_dt) ) &&
                           <FontRed>픽업일자를 꼭 확인하세요</FontRed>
                           }
-{
-                            ( view === 'sendout' &&  !v.return_yn  && v.use_user_info[0].use_id == reducer.myUser.username ) ?
+                          {
+                            ( view === 'sendout' &&  !v.return_yn ) ?
                             <SendBtn onClick={()=>handleEachReturn(data.req_no, v.sample_no)}>반납하기</SendBtn>
                             :
-                            null
+                            ( view === 'sendout' &&  v.return_yn ) 
+                            ?
+                            <img src={CHECKON} alt="date" style={{width:12,height:12}} /> 
+                            :
+                            ( view === 'pickups' &&  v.sendout_yn ) 
+                            ?
+                            <img src={CHECKON} alt="date" style={{width:12,height:12}} /> 
+                            :
+                            null                            
                           }
-
                         </TbodyTd2>
                         <TbodyTd2>
+                          { 
+                          (view === 'sendout' && !v.sendout_yn  && dayjs.unix(data.returning_date).format("YYYY-MM-DD") !== utils.dateToDate(v.return_dt) ) &&
+                          <FontRed>전달일자를 꼭 확인하세요</FontRed>
+                          }
                           {
-                            ( view === 'pickups' &&  !v.pickup_yn  && v.use_user_info[0].use_id == reducer.myUser.username ) ?
+                            ( view === 'pickups' &&  !v.pickup_yn ) ?
                             <SendBtn onClick={()=>handleEachPickup(data.req_no, v.sample_no)}>픽업하기</SendBtn>
+                            :
+                            ( view === 'pickups' && v.pickup_yn ) ? <img src={CHECKON} alt="date" style={{width:12,height:12}} /> 
                             :
                             null
                           }
@@ -393,7 +394,7 @@ const TbodyTd = styled.td`
     props.imgUrl &&
     css`
       background: url("${(props) => props.imgUrl}") no-repeat center;
-      background-size: cover;
+      background-size: contain;
     `}
 `;
 
@@ -401,7 +402,7 @@ const TbodyTd2 = styled.td`
   border: solid 1px #000000;
   word-wrap: break-word;
   font-size: 13px;
-  background-color: ;${(props) => props.bg || "#ffffff"};
+  background-color: ${(props) => props.bg || "#ffffff"};
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -414,7 +415,7 @@ const TbodyTd2 = styled.td`
 `;
 
 const SendBtn = styled.div`
-  width: 50px;
+  width: 100%;
   height: 20px;
   cursor: pointer;
   border-radius: 3px;
@@ -426,7 +427,6 @@ const SendBtn = styled.div`
   justify-content: center;
   font-size: 10px;
   font-weight: bold;
-  margin-left:60px;
   &:hover {
     background-color: ${darken(0.1, "#7ea1b2")};
   }

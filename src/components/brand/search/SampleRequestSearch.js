@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 import useIntersectionObserver from "components/useIntersectionObserver";
 import { apiObject } from "api/api_brand";
 import Progress from "components/common/progress";
-
+import utils from "utils";
 /* 서랍장 상태 관리 */
 import { useRecoilState } from "recoil";
 import { currentDrawer } from "redux/state";
@@ -66,17 +66,29 @@ function SampleRequestSearch({ searchText, total, setTotal }) {
                       <Item
                         key={`${d.req_no}_${i}`}
                         onClick={() =>
-                          history.push("/brand/sample_requests/req")
+                          history.push("/brand/sample_requests/detail/"+d.req_no)
                         }
                         active={isdrawer}
                       >
                         <Img imgUrl={d.img_url_adres} />
                         <TextWrap active={isdrawer}>
-                          <div className="title">{d.contact_user_nm}</div>
+                          <div className="title">
+                            {d.contact_user_nm}                            
+                          </div>
+                          <div className="subTitle">                            
+                            {utils.phoneFormat(d.contact_user_phone)}
+                          </div>
                           <div className="season">
                             {dayjs.unix(d.req_dt).format("YYYY-MM-DD")}
                             <span style={{ margin: "0 10px" }}>|</span>
                             {d.showroom_nm}
+                          </div>
+                          <div className="season">
+                           {d.celeb_list.length > 0 && '셀러브리티 : '} 
+                          {d.celeb_list.map((item) => (                            
+                            item
+                          ))}
+
                           </div>
                         </TextWrap>
                       </Item>
@@ -186,6 +198,22 @@ const TextWrap = styled.div`
   justify-content: center;
   .title {
     font-size: 20px;
+    font-weight: 500;
+    @media (min-width: 1920px) {      
+      min-width: 540px;
+    }
+    @media (min-width: 1440px) and (max-width: 1919px) {      
+      width: ${(props) => (props.active ? "480px" : "310px")};
+    }
+    @media (min-width: 10px) and (max-width: 1439px) {      
+      width: ${(props) => (props.active ? "300px" : "430px")};
+    } 
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .subTitle {
+    font-size: 14px;
     font-weight: 500;
     @media (min-width: 1920px) {      
       min-width: 540px;

@@ -55,7 +55,6 @@ export const UserContextProvider = ({ children, auth }) => {
       return response;
     },
     function (error) {
-      // console.log(error.response);
       if (error.response) {
         if (
           error.response.status === 401 &&

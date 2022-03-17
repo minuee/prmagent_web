@@ -172,7 +172,6 @@ export default function DateRangePicker({
 
   const unAvaliChk = (dt) => {
     for (let i = 0; i < unAvailDt.length; i++) {
-      console.log("UnAvail : ", unAvailDt[i]);
       let st_result = moment(unAvailDt[i]).isAfter(
         moment(startDt).format("YYYY-MM-DD")
       );
@@ -195,13 +194,11 @@ export default function DateRangePicker({
         setStartDt(dt);
       } else if (startDt !== "" && endDt === "") {
         if (moment(dt) < moment(startDt)) {
-          console.log("CHK1");
           setStartDt(dt);
         } else if (
           moment(dt).format("YYYY-MM-DD") ===
           moment(startDt).format("YYYY-MM-DD")
         ) {
-          console.log("CHK2");
           setStartDt(dt);
         } else {
           if (!unAvaliChk(dt)) {
@@ -273,8 +270,6 @@ export default function DateRangePicker({
               ) {
                 isOver = "on";
               }
-
-              console.log("WEEK : ", week);
               return (
                 <DayBack
                   over={isOver}

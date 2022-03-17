@@ -229,15 +229,14 @@ export default function Header({open}) {
         },
         async (data) => {
           // 성공처리
-          console.log("signOutFunction -> data", data);
-  
-          dispatch({
-            type: "SIGN_OUT",
-          });
+          await history.push('/login');
+          let state = { ...history.location.state };
+          await delete state.transaction;
+          await  history.replace({ ...history.location, state });
+          dispatch({type: "SIGN_OUT",});
         },
         (error) => {
           // 실패처리,
-          console.log("signOutFunction -> error", error);
           utils.customAlert(error.message);
         }
       );

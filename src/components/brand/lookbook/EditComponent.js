@@ -17,7 +17,7 @@ import { useRecoilState } from "recoil";
 import { currentDrawer } from "redux/state";
 
 const MainContainer = styled.div`
-  width: 94%;
+  width: 96%;
   margin-left:25px;  
   @media (min-width: 1920px) {
     min-width: ${(props) => (props.active ? "1500px" : "1500px")};    
@@ -32,8 +32,7 @@ const MainContainer = styled.div`
 
 const TitelWrap = styled.div`
   margin-bottom: 60px;
-  width:calc(100%-25px);
-  margin-left:25px;
+  width:100%;  
 `;
 
 const Title = styled.div`
@@ -297,7 +296,7 @@ export default function EditComponent({ data, lookbookNo }) {
   return (
     <MainContainer>
       <TitelWrap>
-        <Title>LookBook111</Title>
+        <Title>LookBook</Title>
       </TitelWrap>
       <InputContainer active={isdrawer}>
         <InputWrap>
@@ -357,7 +356,7 @@ export default function EditComponent({ data, lookbookNo }) {
           <BtnImgWrap>
             <img src={CancelIcon} alt="close"></img>
           </BtnImgWrap>
-          <CancelTxt>Cancel</CancelTxt>
+          <CancelTxt>취소</CancelTxt>
         </BtnWrap>
         <BtnWrap type="confirm" onClick={handleSaveClick}>
           <ConfirtTxt>저장</ConfirtTxt>

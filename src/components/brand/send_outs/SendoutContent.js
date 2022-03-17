@@ -25,19 +25,16 @@ export default function SendoutContent({data,checked,handleChecked,handleClick,v
         newLeftIdxArray.push(element.showroom_list[0].req_no);
         newLeftArray.push(element)
       }
-      if ( !newLeftShowroomIdxArray.includes(element.showroom_list[0].req_no)) {
-        newLeftShowroomIdxArray.push(element.showroom_list[0].showroom_no);        
-      }
+      newLeftShowroomIdxArray.push({reqNo : element.showroom_list[0].req_no , showroom_no : element.showroom_list[0].showroom_no});  
     })          
-    console.log('newLeftShowroomIdxArray',newLeftShowroomIdxArray);
     setLeftData(newLeftArray);
     setLeftShowroomData(newLeftShowroomIdxArray);
-  }, []);
+  }, [data]);
   return (
     <ContentsBox active={isdrawer}>
       <ContentsTitle>
         <ContentsTitleText
-          onClick={() => handleChecked(data, leftData.length)}
+          onClick={() => handleChecked(data.date,leftData, leftData.length,leftShowroomData)}
         >
           {dayjs.unix(data.date).format("M/DD(ddd)")}
           <img

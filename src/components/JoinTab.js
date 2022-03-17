@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 
 const Container = styled.div`
   width: 800px;
-  height: 50px;
+  height: 50px;  
   display: flex;
 `;
 
@@ -17,7 +17,8 @@ const GridDiv = styled.div`
   align-items: center;
   letter-spacing: -0.35px;
   cursor: pointer;
-
+  padding-top:10px;
+  padding-bottom:10px;
   ${(props) =>
     props.active &&
     css`

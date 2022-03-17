@@ -344,8 +344,6 @@ export default function FilterDialog({
   };
 
   const handleSizeSelectAll = (data, name) => {
-    console.log("DATA : ", data);
-    console.log("NAME : ", name);
     if (!checkSizeAll[name]) {
       let arr = [];
       selectSize.forEach((d) => arr.push(d));
@@ -491,7 +489,7 @@ export default function FilterDialog({
                     ? "Women"
                     : d.cd_id === "SSS002"
                     ? "Men"
-                    : "Unisex"}
+                    : "Genderless"}
                 </TitleBtnTxt>
               ))}
             </TitleBtnWrap>

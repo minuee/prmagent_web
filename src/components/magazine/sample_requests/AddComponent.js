@@ -17,7 +17,9 @@ import SelectInput from "components/common/selectInput";
 import SelectInputAddress from "components/magazine/sample_requests/selectInputAddress";
 // import DatePicker from "components/DatePicker";
 import DatePicker from "components/SampleDatePicker";
+import DateNewPicker from "components/SampleDatePicker/new";
 import TimePicker from "components/TimePicker";
+import WeekPicker from "components/WeekNewPicker";
 import AddressDialog from "components/AddressDialog";
 import ModelAddBtn from "assets/model_add_btn.svg";
 import ModelDelBtn from "assets/model_del_btn.svg";
@@ -30,7 +32,6 @@ import utils from "utils";
 export default function AddComponent({data,brandId,handleCancel,handleSubmit,handleTemporarySave,}) {    
     const myinfo = data.contact_info.filter((item) => item.mgzn_user_nm == data.user_nm);
     const myUserDataLocal = JSON.parse(localStorage.getItem("SET_MY_USER"));
-    console.log('myUserDataLocal',myUserDataLocal.username)
     const [myUserData, setMyUserData] = useState(myUserDataLocal);
     const [inputs, setInputs] = useState({
         photogrf_concept: "",
@@ -56,7 +57,9 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
         loc_value: "",
     });
     const [showroomList, setShowroomList] = useState(data.showroom_info);
-    const [shootingDt, setShootingDt] = useState("");
+    const [limitDays, setLimitDays] = useState(data.showroom_info.length > 0 ? data.showroom_info[0].limit_days  : 7);
+    const [shootingStartDt, setShootingStartDt] = useState("");
+    const [shootingEndDt, setShootingEndDt] = useState("");
     const [pickupDt, setPickupDt] = useState("");
     const [returningDt, setReturningDt] = useState("");
     const [startTime, setStartTime] = useState({hour: "00",ampm: "AM",});
@@ -147,45 +150,20 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
         }
     };
 
-    const handleShootingDtClick = async(date) => {
-        /* const dateFormat = moment(date).format("YYYY-MM-DD");
-        const TodayFormat = moment().format("YYYY-MM-DD");
-        let reservationArray =  [];
-        await data.showroom_info.forEach((d2, i2) => {
-            if ( !utils.isEmpty(d2.reservation_list) ) {
-                reservationArray = reservationArray.concat(d2.reservation_list);
-            }
-        });        
-        console.log('handleShootingDtClick',TodayFormat)
-        const isCheck = (element) => ( element.photogrf_dt == dateFormat || element.duty_recpt_dt == dateFormat || element.return_prearnge_dt == dateFormat); */
-        //const isReservation = reservationArray.some(isCheck);
-        //console.log('isReservation',isReservation)
-        /* if ( reservationArray.some(isCheck) ) {
-            utils.customAlert('해당일자에는 이미 예약이 되어 있습니다.');
-            setShootingDt('');
-            setPickupDt('');
-            setReturningDt('');
-            return false;
-        }else if ( TodayFormat >=  dateFormat) {
-            utils.customAlert('오늘보다 이전일자로는 예약이 불가합니다.');
-            setShootingDt('');
-            setPickupDt('');
-            setReturningDt('');
-            return false;
-        }else{ */
+    const handleShootingDtClick = async(sdate,edate) => {
+       
         const today = dayjs().format("YYYY-MM-DD");
-        const shooting_dt = moment(date).format("YYYY-MM-DD");
-        console.log('today',today)
-        console.log('shooting_dt',shooting_dt)
+        const shooting_dt = moment(sdate).format("YYYY-MM-DD");
         if ( today > shooting_dt) {
             utils.customAlert('오늘보다 이전일자는 불가합니다.');
-            return;
+            setShootingStartDt('');
+            return false;
         }else{
-            let pDt = moment(date).subtract({ day: 1 }).day() === 0
-                ? moment(date).subtract({ day: 3 }).format("YYYY-MM-DD")
-                : moment(date).subtract({ day: 1 }).day() === 6
-                ? moment(date).subtract({ day: 2 }).format("YYYY-MM-DD")
-                : moment(date).subtract({ day: 1 }).format("YYYY-MM-DD");
+            let pDt = moment(sdate).subtract({ day: 1 }).day() === 0
+                ? moment(sdate).subtract({ day: 3 }).format("YYYY-MM-DD")
+                : moment(sdate).subtract({ day: 1 }).day() === 6
+                ? moment(sdate).subtract({ day: 2 }).format("YYYY-MM-DD")
+                : moment(sdate).subtract({ day: 1 }).format("YYYY-MM-DD");
             for (let i = 0; i < unavailDt.length; i++) {unavailDt.find((v) => v === pDt &&
                 (pDt =
                     moment(pDt).subtract({ day: 1 }).day() === 0
@@ -196,11 +174,11 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
                 );
             }
 
-            let rDt = moment(date).add({ day: 1 }).day() === 6
-                ? moment(date).add({ day: 3 }).format("YYYY-MM-DD")
-                : moment(date).add({ day: 1 }).day() === 0
-                ? moment(date).add({ day: 2 }).format("YYYY-MM-DD")
-                : moment(date).add({ day: 1 }).format("YYYY-MM-DD");
+            let rDt = moment(edate).add({ day: 1 }).day() === 6
+                ? moment(edate).add({ day: 3 }).format("YYYY-MM-DD")
+                : moment(edate).add({ day: 1 }).day() === 0
+                ? moment(edate).add({ day: 2 }).format("YYYY-MM-DD")
+                : moment(edate).add({ day: 1 }).format("YYYY-MM-DD");
             for (let i = 0; i < unavailDt.length; i++) {
                 unavailDt.find((v) =>v === rDt &&
                 (rDt =
@@ -224,7 +202,8 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
 
         let requestBody = {
             duty_recpt_dt: dayjs(pickupDt).unix(),
-            photogrf_dt: dayjs(shootingDt).unix(),
+            photogrf_dt: dayjs(shootingStartDt).unix(),
+            photogrf_end_dt: dayjs(shootingEndDt).unix(),
             begin_dt: utils.changeHour(startTime.ampm, startTime.hour),
             end_dt: utils.changeHour(endTime.ampm, endTime.hour),
             return_prearnge_dt: dayjs(returningDt).unix(),
@@ -249,7 +228,6 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
             loc_yn: inputs.loc_yn,
             loc_value: inputs.loc_value,
         };
-        console.log('requestBody',requestBody)
         handleSubmit(requestBody);
     };
 
@@ -260,7 +238,8 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
         let requestBody = {
             brand_id: brandId,
             duty_recpt_dt: pickupDt,
-            photogrf_dt: shootingDt,
+            photogrf_dt: shootingStartDt,
+            photogrf_end_dt: shootingEndDt,
             begin_dt: {
                 hour: startTime.hour,
                 ampm: startTime.ampm,
@@ -411,17 +390,20 @@ export default function AddComponent({data,brandId,handleCancel,handleSubmit,han
                         </Rows>
                         <Rows>
                             <InputWrap margin="10px">
-                                <InputTitle>촬영일<Require>*</Require></InputTitle>
-                                <DatePicker
+                                <InputTitle>촬영일(기간)<Require>*</Require></InputTitle>
+                                <DateNewPicker
                                     shooting_yn={true}
-                                    dt={shootingDt}
-                                    setDt={setShootingDt}
+                                    dt={shootingStartDt}
+                                    end_dt={shootingEndDt}
+                                    setDt={setShootingStartDt}
+                                    setEndDt={setShootingEndDt}
                                     unavailDt={unavailDt}
                                     initDt={today}
                                     setInitDt={setToday}
                                     year={year}
                                     setYear={setYear}
                                     handleShootingDtClick={handleShootingDtClick}
+                                    limitDays={limitDays}
                                 />
                             </InputWrap>
                             <InputWrap margin="10px">

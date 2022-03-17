@@ -83,7 +83,7 @@ function YearSelectBox({ width, height, name, value = null, handleChange }) {
     setOpen(false);
   });
 
-  const START_YEAR = 2017;
+  const START_YEAR = dayjs().year();
   const END_YEAR = dayjs().year() + 1;
   const YEAR_OPTIONS = [];
 

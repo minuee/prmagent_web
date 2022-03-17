@@ -18,7 +18,7 @@ function FavShowroomItems({ data, handleLikeClick }) {
           <ImgWrap>
             <Img imgUrl={data.img_url_adres} />
           </ImgWrap>
-          <ItemName>{data.showroom_nm}</ItemName>
+          <ItemName>({data.brand_nm}){data.showroom_nm}</ItemName>
         </ItemCardWrap>
         <LikeIconWrap onClick={() => handleLikeClick(data.showroom_no)}>
           <img src={LikeOn} alt="like" />
@@ -74,11 +74,11 @@ const Img = styled.div`
 `;
 
 const ItemName = styled.div`
-  width: 240px;
-  text-align: center;
+  width: 210px;  
   font-weight: 500;
-  font-size: 16px;
-  margin-top: 19px;
+  font-size: 14px;
+  margin-top: 15px;
+  overflow:hidden;
 `;
 
 const LikeIconWrap = styled.div`

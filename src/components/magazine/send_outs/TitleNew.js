@@ -67,7 +67,7 @@ function Title({view,setView,startDt,setStartDt,endDt,setEndDt,handleViewInit}) 
 }
 
 const Container = styled.div`
-  
+  width:99%;
 `;
 const DataContainer = styled.div`
   display: flex;
@@ -134,6 +134,7 @@ const WeekPickerWrapper = styled.div`
   @media (min-width: 10px) and (max-width: 1439px) {
     width: ${(props) => (props.active ? "350px" : "280px")};
   }  
+  
 `;
 
 const TitleTxt = styled.div`

@@ -59,7 +59,7 @@ const ItemName = styled.div`
   width: 210px;  
   font-weight: 500;
   font-size: 14px;
-  margin-top: 19px;
+  margin-top: 15px;
   overflow:hidden;
 `;
 
@@ -118,7 +118,6 @@ export default function PressReleaseItems({ data, handleLikeClick }) {
 
 
   const handleFileDownload = () => {
-    console.log('handleFileDownload',data)
     if ( !utils.isEmpty(data.word_file_full_adres)) {
       let chk = data.word_file_full_adres.split(".").pop().toLowerCase();
       if (chk === "pdf") {

@@ -9,18 +9,22 @@ import LookComponent from "components/brand/scheduler/LookComponent";
 /* 서랍장 상태 관리 */
 import { useRecoilState } from "recoil";
 import { currentDrawer } from "redux/state";
-
-export default function NewReqComponent({look,req,wait,memo,dt,endDt,season,gender}) {
-  const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer);
-  const week = [
+export default function NewReqComponent({look,req,wait,memo,dt,endDt,season,gender,daysStartTerm,daysEndTerm}) {
+  const [isdrawer, setIsDrawer] = useRecoilState(currentDrawer);  
+  /* const week = [
     moment(dt).weekday(0),
     moment(dt).weekday(1),
     moment(dt).weekday(2),
     moment(dt).weekday(3),
     moment(dt).weekday(4),
     moment(dt).weekday(5),
-    moment(dt).weekday(6),
-  ];
+    moment(dt).weekday(6)
+  ]; */
+
+ /*  const week = [];
+  for(let i=daysStartTerm ; i<=daysEndTerm ; i++) {
+    week.push(moment(dt).weekday(i))
+  } */
   const [inputs, setInputs] = useState();
   const [h, setH] = useState([]);
 
@@ -44,14 +48,7 @@ export default function NewReqComponent({look,req,wait,memo,dt,endDt,season,gend
         vertical={false}
         ignoreElements={"textarea, select"}
       >
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {/* <FlexBox>
-            {week.map((n, index) => (
-              <Wrap style={{ display: "flex", flexDirection: "column" }} key={n}>
-                <DailyMemo data={n} idx={index} look={look} />
-              </Wrap>
-            ))}
-          </FlexBox> */}
+        <div style={{ display: "flex", flexDirection: "column" }}>         
           {inputs !== undefined &&
             inputs.map((d, i) => (
               <ReqBoard
@@ -67,6 +64,9 @@ export default function NewReqComponent({look,req,wait,memo,dt,endDt,season,gend
                 season={season}
                 gender={gender}
                 look={look}
+                thisLook={look[i]}
+                daysStartTerm={daysStartTerm}
+                daysEndTerm={daysEndTerm}
               />
             ))}
         </div>
@@ -94,8 +94,6 @@ const Wrap = styled.div`
 `;
 const FlexBox = styled.div`
   display: flex;
-
-
 `;
 
 const LeftWrap = styled.div`  

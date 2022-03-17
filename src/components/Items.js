@@ -175,11 +175,11 @@ export default function DigitalShowroomItems({
                 Edit
               </EditDiv>
               <IconOuterWrap>
-                {data.is_hot && (
+                {/* {data.is_hot && (
                   <IconWrap>
                     <img src={BestIcon} alt="best" />
                   </IconWrap>
-                )}
+                )} */}
                 {data.is_new && (
                   <IconWrap>
                     <img src={NewIcon} alt="new" />
@@ -201,11 +201,11 @@ export default function DigitalShowroomItems({
               </ImgWrap>
               <ItemName>{data.showroom_nm}</ItemName>
               <IconOuterWrap>
-                {data.is_hot && (
+                {/* {data.is_hot && (
                   <IconWrap>
                     <img src={BestIcon} alt="best" style={{width:'35px'}} />
                   </IconWrap>
-                )}
+                )} */}
                 {data.is_new && (
                   <IconWrap>
                     <img src={NewIcon} alt="new" style={{width:'35px'}} />

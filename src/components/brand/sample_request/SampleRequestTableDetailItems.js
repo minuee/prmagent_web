@@ -4,18 +4,32 @@ import { darken } from "polished";
 
 import ImgCheckIcon from "assets/check_icon_large.svg";
 import RejectIcon from "assets/sample_reject_icon.svg";
-
+import MemoIconBlack from "assets/scheduler/memoIcon.svg";
+import ShowroomMemo from "components/brand/scheduler/ShowroomMemo";
 function SampleRequestTableDetailItems({data,
   acceptList,
   handleAcceptList,
   rejectList,
   handleRejectList,
+  pickup_date = null
 }) {
+  console.log('ddddddd',pickup_date)
   const [hover, setHover] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [sno, setNowno] = useState(null);
+  const [snm, setNowsnm] = useState(null);
+
+  const openShowroomMemo = async(no,nm) => {
+    await setNowno(no);
+    await setNowsnm(nm)
+    if ( sno != null) {
+      setOpen(!open)
+    }
+  }
 
   return (
     <ItemWrap
-      accept={ ( data.showroom_status_cd === "accepted" || data.showroom_status_cd === "rejected" || data.showroom_status === "accepted" || data.showroom_status === "rejected" ) ? true
+      accept={ ( data.showroom_status_cd === "accepted" || data.showroom_status_cd === "rejected" || data.showroom_status === "accepted" || data.showroom_status === "rejected"  ) ? true
           : false
       }
       active={hover}
@@ -25,7 +39,12 @@ function SampleRequestTableDetailItems({data,
       <ImgDiv>
         <Img imgUrl={data.image_url} />
       </ImgDiv>
-      <ItemTitle>{data.showroom_nm}</ItemTitle>
+      <ItemTitle>
+        {data.showroom_nm}
+        <div className="memo" onClick={() => openShowroomMemo(data.showroom_no,data.showroom_nm)}>
+          <img src={MemoIconBlack} alt="memo" />
+        </div>
+      </ItemTitle>
       { ( data.showroom_status_cd === "undecided" || data.showroom_status === "undecided" ) && (
         <>
           {acceptList.includes(data.showroom_no) || rejectList.includes(data.showroom_no) ? (
@@ -70,6 +89,13 @@ function SampleRequestTableDetailItems({data,
           <img src={RejectIcon} alt="" />
         </SampleBtnWrap>
       )}
+      <ShowroomMemo
+        open={open}
+        setOpen={setOpen}
+        sno={sno}
+        snm={snm}
+        dt={pickup_date}
+      />
     </ItemWrap>
   );
 }
@@ -129,6 +155,23 @@ const ItemTitle = styled.div`
   font-size: 16px;
   font-weight: bold;
   margin-top: 19px;
+  .memo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+ 
+    &:hover {
+      background-color: ${darken(0.2, "#ffffff")};
+    }
+    &:active {
+      background-color: ${darken(0.3, "#ffffff")};
+    }
+    > img {
+    }
+  }
 `;
 
 const SampleBtnWrap = styled.div`

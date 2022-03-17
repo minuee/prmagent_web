@@ -178,7 +178,6 @@ export default function SelectDialog({
   const [msg, setMsg] = useState(null);
   const [type, setType] = useState(null);
   const [checked, setCheck] = useState(null);
-  //console.log('nowRequester',nowRequester)
   const handleClose = () => {
     setOpen(false);
   };

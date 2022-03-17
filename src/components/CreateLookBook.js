@@ -130,6 +130,9 @@ const ConfirtTxt = styled.div`
   font-weight: 900;
   color: #ffffff;
 `;
+const Require = styled.span`
+    color: #ff0000;
+`;
 
 export default function CreateLookBook({
   selectData,
@@ -150,12 +153,18 @@ export default function CreateLookBook({
     setInputs({ ...inputs, [e.target.name]: value });
   };
 
-  const handleSubmit = () => {
-    if (!utils.FalsyValueCheck(inputs, [])) {
-      utils.customAlert("필드값을 확인해주세요.");
+  const handleSubmit = async() => {
+    if (utils.isEmpty(inputs.lookbook_nm)) {
+      utils.customAlert("Title을 입력해주세요.");
+    }else if (inputs.lookbook_nm.length > 50) {
+      utils.customAlert("Title을 50자이내로만 입력해주세요.");
+    }else if (utils.isEmpty(inputs.season_cd_id)) {
+      utils.customAlert("Season을 선택력해주세요.");
+    }else if (utils.isEmpty(inputs.gender_cd_id)) {
+      utils.customAlert("Gender를 선택력해주세요.");
     } else {
       let newArr = [];
-      selectData.map((v) => {
+      await selectData.map((v) => {
         newArr.push(v.showroom_no);
       });
       handleCreate(inputs, newArr);
@@ -182,17 +191,17 @@ export default function CreateLookBook({
       </TitelWrap>
       <InputContainer>
         <InputWrap>
-          <InputTitle>Title</InputTitle>
+          <InputTitle>Title<Require> *</Require></InputTitle>
           <InputTextField
             variant="outlined"
             placeholder="Title"
             value={inputs.lookbook_nm}
             name="lookbook_nm"
-            onChange={handleChange}
+            onChange={handleChange}            
           />
         </InputWrap>
         <InputWrap>
-          <InputTitle>Season</InputTitle>
+          <InputTitle>Season<Require> *</Require></InputTitle>
           <Selectbox
             value={inputs.season_cd_id}
             options={sampleCdData.season}
@@ -225,7 +234,7 @@ export default function CreateLookBook({
           </CaptionWrap> */}
         </InputWrap>
         <InputWrap>
-          <InputTitle>Gender</InputTitle>
+          <InputTitle>Gender<Require> *</Require></InputTitle>
           <Selectbox
             value={inputs.gender_cd_id}
             options={sampleCdData.gender}

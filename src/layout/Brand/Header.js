@@ -7,13 +7,7 @@ import { darken } from "polished";
 import AlarmOnIcon from "assets/alarm_black.svg";
 import AlarmOffIcon from "assets/alarm_blue.svg";
 import SearchBox from "components/MainSearchBox";
-
-import {
-    Auth,
-    CurrentAuthUiState,
-    AuthType,
-    UserState,
-  } from "@psyrenpark/auth";
+import {Auth,CurrentAuthUiState,AuthType,UserState} from "@psyrenpark/auth";
 
 /* 서랍장 상태 관리 */
 import { useRecoilState } from "recoil";
@@ -72,8 +66,7 @@ function Header({ data, open }) {
                 authType: AuthType.EMAIL,
             },async (data) => {
                 // 성공처리
-                console.log("signOutFunction -> data", data);    
-                await history.replace(location.pathname, null);
+                await history.push('/login');
                 let state = { ...history.location.state };
                 await delete state.transaction;
                 await  history.replace({ ...history.location, state });
@@ -81,7 +74,6 @@ function Header({ data, open }) {
             },
             (error) => {
                 // 실패처리,
-                console.log("signOutFunction -> error", error);
                 utils.customAlert(error.message);
             }
             );

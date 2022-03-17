@@ -9,8 +9,7 @@ export default function Selectbox({
   height,
   handleChange,
 }) {
-  //console.log("VALUE : ", value);
-  //console.log("DEFAULT VALUE : ", defaultValue);
+
   return (
     <Container
       value={value}

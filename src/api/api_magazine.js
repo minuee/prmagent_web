@@ -98,7 +98,7 @@ export const apiObject = {
         notifi_type : notice_type,
       },
     };
-    console.log('delAlarm',init)
+
     return Api.del(apiName, path, init, loadingFunction);
   },
 
@@ -135,7 +135,7 @@ export const apiObject = {
         still_life_img_yn,
       },
     };
-    console.log('initinit',init)
+
     return Api.post(apiName, path, init);
   },
 
@@ -210,6 +210,7 @@ export const apiObject = {
     brand_id,
     duty_recpt_dt,
     photogrf_dt,
+    photogrf_end_dt,
     begin_dt,
     end_dt,
     return_prearnge_dt,
@@ -239,6 +240,7 @@ export const apiObject = {
         brand_id,
         duty_recpt_dt,
         photogrf_dt,
+        photogrf_end_dt,
         begin_dt,
         end_dt,
         return_prearnge_dt,
@@ -262,7 +264,7 @@ export const apiObject = {
         loc_value,
       },
     };
-    console.log('setSampleRequest',init)
+  
     return Api.post(apiName, path, init);
   },
 
@@ -294,16 +296,29 @@ export const apiObject = {
     return Api.post(apiName, path, init);
   },
 
-  delSampleRequest: ({ req_list }) => {
+  delSampleRequest: ({ req_list,del_list }) => {
     var apiName = v1Api;
     var path = "/magazine/showroom-request-delete/";
     var init = {
       body: {
         req_list,
+        del_list
+      },
+    }; 
+    return Api.del(apiName, path, init);
+  },
+
+  cancelSampleRequest: ({ req_list ,cancel_list}) => {
+    var apiName = v1Api;
+    var path = "/magazine/showroom-request-cancel/";
+    var init = {
+      body: {
+        req_list,
+        cancel_list
       },
     };
-    console.log('delSampleRequest',req_list)
-    return Api.del(apiName, path, init);
+    console.log('cancelSampleRequest',req_list,cancel_list)
+    return Api.put(apiName, path, init);
   },
 
   detailSampleRequest: ({ req_no }) => {
@@ -318,6 +333,7 @@ export const apiObject = {
     req_no,
     duty_recpt_dt,
     photogrf_dt,
+    photogrf_end_dt,
     begin_dt,
     end_dt,
     return_prearnge_dt,
@@ -346,6 +362,7 @@ export const apiObject = {
         req_no,
         duty_recpt_dt,
         photogrf_dt,
+        photogrf_end_dt,
         begin_dt,
         end_dt,
         return_prearnge_dt,
@@ -368,7 +385,7 @@ export const apiObject = {
         loc_value,
       },
     };
-    console.log('editSampleRequest',init)
+ 
     return Api.post(apiName, path, init);
   },
 
@@ -410,6 +427,7 @@ export const apiObject = {
         max_date,
       },
     };
+
     return Api.get(apiName, path, init);
   },
   getScheduleByBrand: ({ min_date, max_date }) => {
@@ -425,7 +443,7 @@ export const apiObject = {
   },
 
   // pickup
-  getPickupSchedule: ({ start_date, fin_date, brand_id }) => {
+  getPickupSchedule: ({ start_date, fin_date, brand_id,is_not_finished }) => {
     var apiName = v1Api;
     var path = "/magazine/pickup-schedule";
     var init = {
@@ -433,13 +451,14 @@ export const apiObject = {
         start_date,
         fin_date,
         brand_id,
+        not_finished : is_not_finished
       },
     };
 
     return Api.get(apiName, path, init);
   },
 
-  getSendoutSchedule: ({ start_date, fin_date, brand_id }) => {
+  getSendoutSchedule: ({ start_date, fin_date, brand_id,is_not_finished }) => {
     var apiName = v1Api;
     var path = "/magazine/sendout-schedule";
     var init = {
@@ -447,6 +466,7 @@ export const apiObject = {
         start_date,
         fin_date,
         brand_id,
+        not_finished : is_not_finished
       },
     };
     return Api.get(apiName, path, init);
@@ -461,20 +481,21 @@ export const apiObject = {
         showroom_no
       },
     };
-    ///console.log('getPickupDetailReq',showroom_no)
+
     return Api.get(apiName, path, init);
   },
-  getPickupDetail: ({ date , showroomList = [],reqnoList = [] }) => {
+  getPickupDetail: ({ date , showroomList = [],reqnoList = [],is_list = 'null' }) => {
     var apiName = v1Api;
     var path = `/magazine/pickup-detailed/${date}`;
     var init = {
       queryStringParameters: {
         date,
         showroomList : JSON.stringify(showroomList),
-        reqnoList : JSON.stringify(reqnoList)
+        reqnoList : JSON.stringify(reqnoList),
+        is_list
       },
     };
-    console.log('getPickupDetail maga',init)
+
     return Api.get(apiName, path, init);
   },
   getSendoutDetailReq: ({ req_no,showroom_no }) => {
@@ -488,17 +509,18 @@ export const apiObject = {
     };
     return Api.get(apiName, path, init);
   },
-  getSendoutDetail: ({ date,showroomList = [],reqnoList = [] }) => {
+  getSendoutDetail: ({ date,showroomList = [],reqnoList = [] ,is_list = 'null'}) => {
     var apiName = v1Api;
     var path = `/magazine/sendout-detailed/${date}`;
     var init = {
       queryStringParameters: {
         date,
         showroomList : JSON.stringify(showroomList),
-        reqnoList : JSON.stringify(reqnoList)
+        reqnoList : JSON.stringify(reqnoList),
+        is_list
       },
     };
-    console.log('getSendoutDetail maga',init)
+    console.log('getSendoutDetail',init);
     return Api.get(apiName, path, init);
   },
 
@@ -748,7 +770,7 @@ export const apiObject = {
   },
 
   addFavorites: async ({ category, id }) => {
-    console.log(id);
+
     var apiName = v1Api;
     var path =
       category === "showroom"

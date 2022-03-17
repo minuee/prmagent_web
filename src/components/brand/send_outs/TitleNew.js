@@ -97,7 +97,7 @@ function Title({view,setView,startDt,setStartDt,endDt,setEndDt,handleViewInit}) 
 }
 
 const Container = styled.div`
-  width:98%;
+  width:99%;
 `;
 const DataContainer = styled.div`
   display: flex;

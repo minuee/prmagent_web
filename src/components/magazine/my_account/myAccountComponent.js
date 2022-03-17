@@ -479,8 +479,6 @@ export default function MyAccountComponent({ data, position }) {
     return <Progress type="upload" />;
   }
 
-  console.log("INPUTS : ", inputs);
-
   return (
     <>
       <Container>

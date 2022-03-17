@@ -148,12 +148,12 @@ export default function AddSample({
       if ( sample[idx].still_life_img_yn  ) {
         sample[idx].still_life_img_yn = !sample[idx].still_life_img_yn;
       }else{
-        if ( sample[idx].in_yn ) {
+        //if ( sample[idx].in_yn ) {
           sample[idx].still_life_img_yn = !sample[idx].still_life_img_yn;
-        }else{
-          utils.customAlert("누끼컷은 샘플입고시에만 가능합니다.");
-          return;
-        }
+        //}else{
+          //utils.customAlert("누끼컷은 샘플입고시에만 가능합니다.");
+          //return;
+        //}
       }
       setSample([...sample]);
     }

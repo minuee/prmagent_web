@@ -150,11 +150,11 @@ export default function CreateLookBookItems({
             <CloseIcon />
           </EditDiv>
           <IconOuterWrap>
-            {data.is_hot && (
+            {/* {data.is_hot && (
               <IconWrap>
                 <img src={BestIcon} alt="best" style={{width:'35px'}}/>
               </IconWrap>
-            )}
+            )} */}
             {data.is_new && (
               <IconWrap>
                 <img src={NewIcon} alt="new" style={{width:'35px'}}/>

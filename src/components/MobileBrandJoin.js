@@ -130,7 +130,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
   const classes = useStyles();
   const history = useHistory();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-  console.log('windowDimensions',windowDimensions)
+
   useEffect(() => {
     function handleResize() {
       setWindowDimensions(getWindowDimensions());
@@ -261,7 +261,6 @@ export default function BrandJoin({ tos, privacy, marketing }) {
     }
     // if (!utils.FalsyValueCheck(inputs, ["myTeam", "brand_id"])) {
     //   utils.customAlert("입력 필드 값들을 확인해주세요.");
-    //   console.log("inputs : ", inputs);
     //   return;
     // }
     else {
@@ -365,7 +364,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
   };
 
   const handleImgUpload = ({ target }) => {
-    console.log("target : ", target.files[0]);
+
     const name = target.accept.includes("image/png") ? "images" : "noImage";
     let img = new Image();
     img.src = URL.createObjectURL(target.files[0]);
@@ -388,7 +387,6 @@ export default function BrandJoin({ tos, privacy, marketing }) {
           fileInput.current.value = "";
         }
       } else {
-        console.log("No Image file...");
         fileInput.current.value = "";
         return;
       }
@@ -437,10 +435,8 @@ export default function BrandJoin({ tos, privacy, marketing }) {
               label: item.position + " " + item.user_nm,
             }))
           );
-        console.log("success: ", data);
       },
       onError: (error) => {
-        console.log("failed: ", error);
       },
     }
   );
@@ -634,7 +630,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
             type="filled"
             color="#7ea1b2"
             textColor="#ffffff"
-            text="인증번호요청"
+            text="인증 번호 요청"
             handleClick={handleMobileAuth}
           />
         </InputWrap>
@@ -651,7 +647,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
             }}
           />
         </InputWrap>
-        <InputWrap onClick={handleTeamSearch}>
+       {/*  <InputWrap onClick={handleTeamSearch}>
           <SelectBox
             width="75vw"
             height="37px"
@@ -669,7 +665,7 @@ export default function BrandJoin({ tos, privacy, marketing }) {
             textColor="#ffffff"
             text="팀원검색"
           />
-        </InputWrap>
+        </InputWrap> */}
         {inputs.company !== "" && !inputs.logo_yn && (
           <InputWrap style={{ marginBottom: "40px" }}>
             <TextField

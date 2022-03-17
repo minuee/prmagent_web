@@ -114,7 +114,6 @@ export default function LookBookEditItems({ data, list, handleDeleteItem }) {
     } else {
       handleDeleteItem(data.showroom_no);
     }
-    console.log("DEL : ", data.showroom_no);
   };
 
   return (
@@ -138,11 +137,11 @@ export default function LookBookEditItems({ data, list, handleDeleteItem }) {
             <CloseIcon />
           </EditDiv>
           <IconOuterWrap>
-            {data.is_hot && (
+            {/* {data.is_hot && (
               <IconWrap>
                 <img src={BestIcon} alt="best" style={{width:'35px'}} />
               </IconWrap>
-            )}
+            )} */}
             {data.is_new && (
               <IconWrap>
                 <img src={NewIcon} alt="new" style={{width:'35px'}} />

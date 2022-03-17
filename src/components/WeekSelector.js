@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import 'moment/locale/ko';
 import moment from "moment";
 import DayPicker from "react-day-picker";
 import {
@@ -171,8 +172,7 @@ export const WeekSelectorInput = ({
   };
 
   const handleWeekSelect = (days) => {
-    console.log("hello");
-    console.log(days);
+
   };
 
   const toPrevWeek = () => {

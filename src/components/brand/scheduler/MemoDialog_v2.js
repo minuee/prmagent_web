@@ -33,11 +33,11 @@ const COLOR_OPTIONS_02 = [
   "#e6e667",
 ];
 
-function MemoDialog({ open, setOpen, selectLook, selectDate, nowDt }) {
+function MemoDialog({ open, setOpen, selectLook, selectDate, nowDt,thisLook }) {
   const [color, setColor] = useState("#c18c8c");
   const [msg, setMsg] = useState("");
   const [editYn, setEditYn] = useState(false);
-  const [look, setLook] = useState(null);
+  const [look, setLook] = useState(thisLook != null ? thisLook.showroom_no : null);
   const [date, setDate] = useState(null);
   const queryClient = useQueryClient();
 

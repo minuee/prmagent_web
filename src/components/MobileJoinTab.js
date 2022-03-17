@@ -3,7 +3,6 @@ import styled, { css } from "styled-components";
 import SelectBox from "../components/SelectBox";
 
 const { innerWidth: width, innerHeight: height } = window;
-console.log('innerWidth',width)
 const Container = styled.div`
   width: 100%;  
   height: 50px;
@@ -56,7 +55,6 @@ export default function MobileJoinTab({ nowTab, setNowTab }) {
   });
 
   const handleChangeSelectBox = (name, data) => {
-    console.log('handleChangeSelectBox',name,data)
     setInputs({ ...inputs, [name]: data });
     setNowTab(data)
   };
